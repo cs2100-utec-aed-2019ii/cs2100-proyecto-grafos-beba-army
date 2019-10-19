@@ -24,12 +24,12 @@ public:
 
 
 template<bool V>
-class Grafo<pair<int,int>,V>
+class Grafo<pair<float,float>,V>
 {
 private:
-    typedef vector<Node<pair<int,int>>*> NodeList;
+    typedef vector<Node<pair<float,float>>*> NodeList;
 
-    typedef Node<pair<int,int>>* node_t;
+    typedef Node<pair<float,float>>* node_t;
 
     NodeList nodes;
 
@@ -38,12 +38,10 @@ public:
     Grafo(Grafo* miGrafo);//Copia
     Grafo(int opcion);//Parametro
 
-    void addNode(pair<int,int> val);
-    void addEdge(node_t start, node_t end);
-    void addEdge(node_t start, node_t end, float weight);
+    void addNode(pair<float,float> val);
+    void addEdge(int start, int end);
+    void addEdge(int start, int end, float weight);
         
-
-
     NodeList getNodes(){
         return nodes;
     }
@@ -52,39 +50,75 @@ public:
 };
 
 
-
 template< bool V>
-Grafo<pair<int,int>,V>::Grafo(Grafo* miGrafo){
-
+Grafo<pair<float,float>,V>::Grafo(Grafo* miGrafo){
+    for(auto node: miGrafo->nodes){
+        nodes.emplace_back(new Node<pair<float,float>>(node->value));
+        for(auto edge: node->edges){
+            nodes[nodes.size()-1]->edges.emplace_back(new Edge<float>(edge->start,edge->end,edge->weight));
+        }
+        
+    }
 }//Copia
 
 template<bool V>
-Grafo<pair<int,int>,V>::Grafo(int opcion){
+Grafo<pair<float,float>,V>::Grafo(int opcion){
 
 }//Parametro
 
 template<bool V>
-void Grafo<pair<int,int>,V>::addNode(pair<int,int> val){
-    nodes.emplace_back(new Node<pair<int,int>>(val));
+Grafo<pair<float,float>,V>::~Grafo(){
+    for(auto node: nodes){
+        for(auto edge: node->edges){
+            delete edge;
+        }
+        delete node;
+    }
 }
 
 template<bool V>
-void Grafo<pair<int,int>,V>::addEdge(node_t start, node_t end, float weight){
+void Grafo<pair<float,float>,V>::addNode(pair<float,float> val){
+    nodes.emplace_back(new Node<pair<float,float>>(val));
+}
+
+template<bool V>
+void Grafo<pair<float,float>,V>::addEdge(int start, int end, float weight){
     if(start == end){
         cout<<"Loops not allowed\n";
         return;
     }
-    start->edges.emplace_back(new Edge<pair<int,int>,float>(start, end, weight));
-    end->edges.emplace_back(new Edge<pair<int,int>, float>(start, end, weight));
+    nodes[start]->edges.emplace_back(new Edge<float>(start, end, weight));
+    nodes[end]->edges.emplace_back(new Edge<float>(start, end, weight));
 }
 
 template<>
-void Grafo<pair<int,int>,true>::addEdge(node_t start, node_t end, float weight){
+void Grafo<pair<float,float>,true>::addEdge(int start, int end, float weight){
     if(start == end){
         cout<<"Loops not allowed\n";
         return;
     }
-    start->edges.emplace_back(new Edge<pair<int,int>,float>(start, end, weight));
+    nodes[start]->edges.emplace_back(new Edge<float>(start, end, weight));
+}
+
+template<bool V>
+void Grafo<pair<float,float>,V>::addEdge(int start, int end){
+    if(start == end){
+        cout<<"Loops not allowed\n";
+        return;
+    }
+    float weight = pow(pow(nodes[start]->value.first-nodes[end]->value.first,2)-pow(nodes[start]->value.second-nodes[end]->value.second,2),2);
+    nodes[start]->edges.emplace_back(new Edge<float>(start, end, weight));
+    nodes[end]->edges.emplace_back(new Edge<float>(start, end, weight));
+}
+
+template<>
+void Grafo<pair<float,float>,true>::addEdge(int start, int end){
+    if(start == end){
+        cout<<"Loops not allowed\n";
+        return;
+    }
+    float weight = pow(pow(nodes[start]->value.first-nodes[end]->value.first,2)-pow(nodes[start]->value.second-nodes[end]->value.second,2),2);
+    nodes[start]->edges.emplace_back(new Edge<float>(start, end, weight));
 }
 
 

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-template<typename T, typename P>
+template<typename T>
 struct Edge;
 
 template<typename T>
@@ -23,10 +23,10 @@ struct Node
 
 
 template<>
-struct Node<pair<int,int>>{
+struct Node<pair<float,float>>{
 
-    typedef pair<int,int> node_t;
-    typedef vector<Edge<node_t,float>*> EdgeList;
+    typedef pair<float,float> node_t;
+    typedef vector<Edge<float>*> EdgeList;
 
     EdgeList edges;
     node_t value;
@@ -42,13 +42,13 @@ Node<T>::Node(T val){
 }
 
 
-Node<pair<int,int>>::Node(pair<int,int> val){
+Node<pair<float,float>>::Node(pair<float,float> val){
     value = val;
 }
 
 
 //-------------------------------------------EDGE----------------------------
-template<typename T, typename P>
+template<typename T>
 struct Edge
 {
     
@@ -57,40 +57,33 @@ struct Edge
 
 
 template<>
-struct Edge<pair<int,int>, float>
+struct Edge<float>
 {
-    typedef pair<int,int> node_t;
 
-    Node<node_t>* start;
+    int start;
     float weight;
-    Node<node_t>* end;
+    int end;
 
-    Edge(Node<node_t>* start, Node<node_t>* end); //Euclidean distance
-    Edge(Node<node_t>* start, Node<node_t>* end, float _weight); //Parameter
+    Edge(int start, int end); //Euclidean distance
+    Edge(int start, int end, float _weight); //Parameter
     ~Edge();
 
-    void getWeight();
 };
 
 
-void Edge<pair<int,int>, float>::getWeight(){
-    weight =  pow(pow(start->value.first - end->value.first,2) + pow(start->value.second - end->value.second,2),0.5);
-    
-}
 
 
-Edge<pair<int,int>, float>::Edge(Node<pair<int,int>>* start, Node<pair<int,int>>* end){
+Edge< float>::Edge(int start, int end){
     this->start = start;
 
     this->end = end;
 
-    getWeight();
 
 }
 
-Edge<pair<int,int>, float>::Edge(Node<pair<int,int>>* start, Node<pair<int,int>>* end, float weight){
+Edge<float>::Edge(int start, int end, float weight){
     this->start = start;
-
+    this->weight = weight;
     this->end = end;
 
 }

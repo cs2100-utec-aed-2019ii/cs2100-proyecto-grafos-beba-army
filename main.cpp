@@ -6,14 +6,19 @@ using namespace std;
 int main(){
 
 
-    Grafo<pair<int,int>,true>* testGrafo = new Grafo<pair<int,int>,true>();
+    Grafo<pair<float,float>,false>* nodGrafo = new Grafo<pair<float,float>,false>();
+    Grafo<pair<float,float>,true>* dGrafo = new Grafo<pair<float,float>,true>();
 
-    testGrafo->addNode(pair<int,int>(1,1));
-    testGrafo->addNode(pair<int,int>(2,2));
-    testGrafo->addEdge(testGrafo->getNodes()[0],testGrafo->getNodes()[1]);
+    nodGrafo->addNode(pair<float,float>(1,1));
+    nodGrafo->addNode(pair<float,float>(2,2));
+    nodGrafo->addEdge(0,1,3);
 
-    cout<<testGrafo->getNodes()[0]->value.first<<endl;
-    cout<<testGrafo->getNodes()[1]->value.first<<endl;
+    //Grafo<pair<int,int>,false>* _nodGrafo = new Grafo<pair<int,int>,false>(nodGrafo);
+
+    cout<<nodGrafo->getNodes()[0]->value.first<<endl;
+    cout<<nodGrafo->getNodes()[1]->value.first<<endl;
+    cout<<nodGrafo->getNodes()[0]->edges[0]->weight<<endl;
+
 
 
 
