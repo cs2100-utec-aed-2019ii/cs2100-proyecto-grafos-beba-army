@@ -11,14 +11,19 @@ int main(){
 
     nodGrafo->addNode(pair<float,float>(1,1));
     nodGrafo->addNode(pair<float,float>(2,2));
-    nodGrafo->addEdge(0,1,3);
+    nodGrafo->addNode(pair<float,float>(3,3));
+    nodGrafo->addNode(pair<float,float>(4,4));
+
+    nodGrafo->addEdge(0,1,1);
+    nodGrafo->addEdge(0,2,2);
+    nodGrafo->addEdge(0,3,3);
 
     //Grafo<pair<int,int>,false>* _nodGrafo = new Grafo<pair<int,int>,false>(nodGrafo);
 
     cout<<nodGrafo->getNodes()[0]->value.first<<endl;
     cout<<nodGrafo->getNodes()[1]->value.first<<endl;
     cout<<nodGrafo->getNodes()[0]->edges[0]->weight<<endl;
-
+    cout<<"Node 1 grade: "<<nodGrafo->nodeGrade(0);
 
 
 

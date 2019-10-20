@@ -41,7 +41,7 @@ public:
     void addNode(pair<float,float> val);
     void addEdge(int start, int end);
     void addEdge(int start, int end, float weight);
-        
+    int nodeGrade(int index);
     NodeList getNodes(){
         return nodes;
     }
@@ -121,6 +121,10 @@ void Grafo<pair<float,float>,true>::addEdge(int start, int end){
     nodes[start]->edges.emplace_back(new Edge<float>(start, end, weight));
 }
 
+template<bool V>
+int Grafo<pair<float,float>,V>::nodeGrade(int index){
+    return nodes[index]->edges.size();
+}
 
 
 #endif
