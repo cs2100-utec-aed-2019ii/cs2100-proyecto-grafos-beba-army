@@ -46,6 +46,10 @@ Node<pair<float,float>>::Node(pair<float,float> val){
     value = val;
 }
 
+Node<pair<float,float>>::~Node(){
+
+}
+
 
 //-------------------------------------------EDGE----------------------------
 template<typename T>
@@ -73,7 +77,7 @@ struct Edge<float>
 
 
 
-Edge< float>::Edge(int start, int end){
+Edge<float>::Edge(int start, int end){
     this->start = start;
 
     this->end = end;
@@ -89,7 +93,9 @@ Edge<float>::Edge(int start, int end, float weight){
 }
 
 
+Edge< float>::~Edge(){
 
+}
 
 
 
