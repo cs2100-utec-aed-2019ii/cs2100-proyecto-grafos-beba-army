@@ -5,7 +5,6 @@ using namespace std;
 
 int main(){
 
-
     Grafo<pair<float,float>,false>* nodGrafo = new Grafo<pair<float,float>,false>();
     Grafo<pair<float,float>,true>* dGrafo = new Grafo<pair<float,float>,true>();
 
@@ -23,6 +22,10 @@ int main(){
     cout<<"Trying to add loop: \n";
     nodGrafo->addEdge(4,4,0.3);
 
+		cout << "SHOW ALL EDGES" << endl;
+		auto sorted_edges = nodGrafo->non_decreasing_edges();
+		for (auto i : sorted_edges)
+			cout << i->weight << " ";
 
     //Grafo<pair<int,int>,false>* _nodGrafo = new Grafo<pair<int,int>,false>(nodGrafo);
 
@@ -38,6 +41,9 @@ int main(){
 
     cout<<"DFS for 0 to 3: "<<nodGrafo->dfs(0,3)<<endl;
     cout<<"DFS for 0 to 4: "<<nodGrafo->dfs(0,4)<<endl;
+
+		cout << "LISTADO DE PUNTOS "<<endl;
+		cout << "SALE =====>" << nodGrafo->dfs_connected(0) << endl;
 
     cout<<"DeleteNode test: \n";
     nodGrafo->deleteNode(1);
