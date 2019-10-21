@@ -70,6 +70,9 @@ struct Edge<float>
 
     Edge(int start, int end); //Euclidean distance
     Edge(int start, int end, float _weight); //Parameter
+		bool operator< (const Edge &other) const{
+			return weight < other.weight;
+		}
     ~Edge();
 
 };
