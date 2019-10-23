@@ -44,16 +44,18 @@ class Grafo<pair<float,float>,V>
 		Grafo(Grafo* miGrafo);//Copia
 		Grafo(int opcion);//Parametro
 
+		bool findEdgePair(vector<pair<float,float>> visited, pair<float,float> find);
+
 		void addNode(pair<float,float> val);
-		void addEdge(int start, int end);
-		void addEdge(int start, int end, float weight);
+		void addEdge(pair<float,float> start, pair<float,float> end); 
+		void addEdge(pair<float,float> start, pair<float,float> end, float weight); 
 
-		void deleteNode(int index);
-		void deleteEdge(int start, int end);
+		void deleteNode(pair<float,float> index); 
+		void deleteEdge(pair<float,float> start, pair<float,float> end);  
 
-		int nodeGrade(int index);
-		bool bfs(int starf, int find);
-		bool dfs(int starf, int find);
+		int nodeGrade(pair<float,float> index);
+		bool bfs(pair<float,float> starf, pair<float,float> find); 
+		bool dfs(pair<float,float> starf, pair<float,float> find); 
 		bool dfs_connected(int sartf);
 		void dfs_connected(stack<int>& pila, vector<int>& visited, Node<pair<float,float>>* curr);
 		vector<Edge<float>*> non_decreasing_edges();
@@ -71,10 +73,9 @@ template< bool V>
 Grafo<pair<float,float>,V>::Grafo(Grafo* miGrafo){
 	for(auto node: miGrafo->nodes){
 		nodes.emplace_back(new Node<pair<float,float>>(node->value));
-		for(auto edge: node->edges){
-			nodes[nodes.size()-1]->edges.emplace_back(new Edge<float>(edge->start,edge->end,edge->weight));
-		}
-
+	}
+	for(auto edge: miGrafo->edges){
+		edges.emplace_back(new Edge<float>(edge->start, edge->end, edge->weight));
 	}
 }
 
@@ -86,11 +87,22 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 template<bool V>
 Grafo<pair<float,float>,V>::~Grafo(){
 	for(auto node: nodes){
-		for(auto edge: node->edges){
-			delete edge;
-		}
+		
 		delete node;
 	}
+	for(auto edge: edges){
+		delete edge;
+	}
+}
+
+template<bool V>
+bool Grafo<pair<float,float>,V>::findEdgePair(vector<pair<float,float>> visited, pair<float,float> find){
+	for(auto item: visited){
+		if(item == find){
+			return true;
+		}
+	}
+	return false;
 }
 
 template<bool V>
@@ -99,189 +111,206 @@ void Grafo<pair<float,float>,V>::addNode(pair<float,float> val){
 }
 
 template<bool V>
-void Grafo<pair<float,float>,V>::addEdge(int start, int end, float weight){
+void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,float> end, float weight){
 	if(start == end){
-		cout << "Loops not allowed: " << start <<" -> "<< end << endl;
+		cout << "Loops not allowed\n";
 		return;
 	}
-	Edge<float>* nedge = new Edge<float>(start, end, weight);
-	cout << "New edge: " << start << " -> " << end << " - weight: " << weight << endl;
-	nodes[start]->edges.emplace_back(nedge);
+	cout << "New edge: (" << start.first<<","<<start.second << ") -> (" << end.first<<","<<end.second << ") - weight: " << weight << endl;
+	edges.emplace_back(new Edge<float>(start, end, weight));
 
-	cout << "New edge: " << end << " -> " << start << " - weight: " << weight << endl;
-	nodes[end]->edges.emplace_back(nedge);
-	edges.emplace_back(nedge);
+	cout << "New edge: (" << end.first<<","<<end.second << ") -> (" << start.first<<","<<start.second << ") - weight: " << weight << endl;	
+	edges.emplace_back(new Edge<float>(end, start, weight));
 }
 
 template<>
-void Grafo<pair<float,float>,true>::addEdge(int start, int end, float weight){
+void Grafo<pair<float,float>,true>::addEdge(pair<float,float> start, pair<float,float> end, float weight){
 	if (start == end){
-		cout << "Loops not allowed\n" << start << " -> " << end << endl;
+		cout << "Loops not allowed\n";
 		return;
 	}
-	Edge<float>* nedge = new Edge<float>(start, end, weight);
-	nodes[start]->edges.emplace_back(nedge);
-	edges.emplace_back(nedge);
+
+	cout << "New edge: (" << start.first<<","<<start.second << ") -> (" << end.first<<","<<end.second << ") - weight: " << weight << endl;
+	edges.emplace_back(new Edge<float>(start, end, weight));
 }
 
 template<bool V>
-void Grafo<pair<float,float>,V>::addEdge(int start, int end){
+void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,float> end){
 	if (start == end){
-		cout << "Loops not allowed\n" << start << " -> " << end << endl;
+		cout << "Loops not allowed\n";
 		return;
-	}
-	float weight = pow(pow(nodes[start]->value.first-nodes[end]->value.first,2)-pow(nodes[start]->value.second-nodes[end]->value.second,2),2);
-	Edge<float>* nedge = new Edge<float>(start, end, weight);
-
-	nodes[start]->edges.emplace_back(nedge);
-	nodes[end]->edges.emplace_back(nedge);
-	edges.emplace_back(nedge);
-}
-
-template<>
-void Grafo<pair<float,float>,true>::addEdge(int start, int end){
-	if(start == end){
-		cout<<"Loops not allowed\n"<<start<<" -> "<<end<<endl;
-		return;
-	}
-	float weight = pow(pow(nodes[start]->value.first-nodes[end]->value.first,2)-pow(nodes[start]->value.second-nodes[end]->value.second,2),2);
-	Edge<float>* nedge = new Edge<float>(start, end, weight);
-	nodes[start]->edges.emplace_back(new Edge<float>(start, end, weight));
-	edges.emplace_back(nedge);
-}
-
-
-template<bool V>
-void Grafo<pair<float,float>,V>::deleteNode(int index){
-
-	Node<pair<float,float>>* temp = nullptr;
-
-	temp = nodes[index];
-
-	nodes[index] = nullptr;
-
-	vector<int> connections;
-
-
-	for(auto edge : temp->edges){
-		cout<<edge->start<<" -> "<<edge->end<<" deleted."<<endl;
-		if(!V){
-			connections.push_back(edge->end);
-		}
-		delete edge;
-	}
-
-	delete temp;
-
-	if(!V){
-		for(int i = 0; i < connections.size(); i++){
-			temp = nodes[connections[i]];
-			cout<<"Checking node: "<<connections[i]<<endl;
-			for(auto it = temp->edges.begin(); it != temp->edges.end(); it++){
-				if((*it)->end == index){
-					cout<<(*it)->start<<" -> "<<(*it)->end<<" deleted from node: "<<connections[i]<<endl;
-					delete (*it);
-					temp->edges.erase(it);
-					break;
-				}
-			}
-		}
 	}
 	
-	cout<<"Node "<<index<<" deleted.\n";
+	float weight = pow(pow(start.first-end.first,2)-pow(start.second-end.second,2),2);
+
+	edges.emplace_back(new Edge<float>(start, end, weight));
+	edges.emplace_back(new Edge<float>(end, start, weight));
+
+	cout << "New edge: (" << start.first<<","<<start.second << ") -> (" << end.first<<","<<end.second << ") - weight: " << weight << endl;
+
+
 }
 
-//falta editar para que funcione con el nuevo vector implementado
-template<bool V>
-void Grafo<pair<float,float>,V>::deleteEdge(int start, int end){
-	Node<pair<float,float>>* temp = nodes[start];
+template<>
+void Grafo<pair<float,float>,true>::addEdge(pair<float,float> start, pair<float,float> end){
+	if(start == end){
+		cout<<"Loops not allowed\n";
+		return;
+	}
 
-	for(auto it = temp->edges.begin(); it != temp->edges.end(); it++){
-		if((*it)->start == start && (*it)->end == end){
-			temp->edges.erase(it);
+	float weight = pow(pow(start.first-start.first,2)-pow(start.second-end.second,2),2);
+	edges.emplace_back(new Edge<float>(start, end, weight));
+
+	cout << "New edge: (" << start.first<<","<<start.second << ") -> (" << end.first<<","<<end.second << ") - weight: " << weight << endl;
+
+}
+
+
+template<bool V>
+void Grafo<pair<float,float>,V>::deleteNode(pair<float,float> index){
+
+	for(auto it = nodes.begin(); it != nodes.end(); it++){
+		if((*it)->value == index){
+			cout<<"Deleting node: ("<<(*it)->value.first<<","<<(*it)->value.second<<")\n";
+			delete (*it);
+			nodes.erase(it);
 			break;
 		}
 	}
 
-	if(!V){
-		Node<pair<float,float>>* temp = nodes[end];
+	for(auto it = edges.begin(); it != edges.end(); it++){
+		if((*it)->end == index || (*it)->start == index){
+			cout<<"Deleting edge: ("<<(*it)->start.first<<","<<(*it)->start.second<<") -> ("<<(*it)->end.first<<","<<(*it)->end.second<<")\n";
+			delete (*it);
+			edges.erase(it--);
+			
+		}
+	}
+	
+	cout<<"Node ("<<index.first<<","<<index.second<<") deleted.\n";
+}
 
-		for(auto it = temp->edges.begin(); it != temp->edges.end(); it++){
-			if((*it)->start == start && (*it)->end == end){
-				delete (*it);
-				temp->edges.erase(it);
+template<bool V>
+void Grafo<pair<float,float>,V>::deleteEdge(pair<float,float> start, pair<float,float> end){
+
+	for(auto it = edges.begin(); it != edges.end(); it++){
+		if((*it)->start == start && (*it)->end == end){
+			delete (*it);
+			edges.erase(it--);
+			if(V){
 				break;
 			}
 		}
+		else if((*it)->start == end && (*it)->end == start && !V){
+			delete (*it);
+			edges.erase(it--);
+		}
 	}
 
-	cout<<"Edge "<<start<<" -> "<<end<<" deleted.\n";
+	cout<<"Edge (" << start.first<<","<<start.second << ") -> (" << end.first<<","<<end.second << ") deleted.\n";
 
 }
 
 template<bool V>
-int Grafo<pair<float,float>,V>::nodeGrade(int index){
-	return nodes[index]->edges.size();
+int Grafo<pair<float,float>,V>::nodeGrade(pair<float,float> index){
+	int grade = 0;
+
+	for(auto edge: edges){
+		if(edge->start.first == index.first && edge->start.second == index.second){
+			grade++;
+		}
+	}
+	return grade;
 }
 
 template<bool V>
-bool Grafo<pair<float,float>,V>::bfs(int start, int find){
+bool Grafo<pair<float,float>,V>::bfs(pair<float,float> start, pair<float,float> find){
 
-	queue<int> nodos;
+	queue<pair<float,float>> nodos;
 
-	vector<int> visited(nodes.size(),0);
+	vector<pair<float,float>> visited;
+
+	pair<float,float> current;
 
 	nodos.push(start);
+	visited.push_back(start);
 
-	Node<pair<float,float>>* current = nullptr;
+	cout<<"\n";
 
 	while(!nodos.empty()){
 
-		current = nodes[nodos.front()];
+		current = nodos.front();
+
+		cout<<"Current node: ("<<current.first<<","<<current.second<<")\n";	
+
+
+		
 		nodos.pop();
 
-		for(auto edge: current->edges){
-			if(edge->end == find){
+		if(current == find){
 				return true;
 			}
-			else if(!visited[edge->end]){
-				nodos.push(edge->end);
-				visited[edge->end] = 1;
+
+		for(auto edge: edges){
+			if(edge->start == current && !findEdgePair(visited, edge->end)){
+				cout<<"Inserting from edge: ("<<current.first<<","<<current.second<<") -> ("<<edge->end.first<<","<<edge->end.second<<")\n";
+					nodos.push(edge->end);
+					visited.push_back(edge->end);
+
 			}
 		}
+
+		
 	}
+
 	return false;
+
 }
 
 template<bool V>
-bool Grafo<pair<float,float>,V>::dfs(int start, int find){
+bool Grafo<pair<float,float>,V>::dfs(pair<float,float> start, pair<float,float> find){
 
-	stack<int> nodos;
+	stack<pair<float,float>> nodos;
 
-	vector<int> visited(nodes.size(),0);
+	vector<pair<float,float>> visited;
+
+	pair<float,float> current;
 
 	nodos.push(start);
+	visited.push_back(start);
 
-	Node<pair<float,float>>* current = nullptr;
+	cout<<"\n";
 
 	while(!nodos.empty()){
 
-		current = nodes[nodos.top()];
+		current = nodos.top();
+
+		cout<<"Current node: ("<<current.first<<","<<current.second<<")\n";	
+
+
+		
 		nodos.pop();
 
-		for(auto edge: current->edges){
-			if(edge->end == find){
+		if(current == find){
 				return true;
 			}
-			else if(!visited[edge->end]){
-				nodos.push(edge->end);
-				visited[edge->end] = 1;
+
+		for(auto edge: edges){
+			if(edge->start == current && !findEdgePair(visited, edge->end)){
+					cout<<"Inserting from edge: ("<<current.first<<","<<current.second<<") -> ("<<edge->end.first<<","<<edge->end.second<<")\n";
+					nodos.push(edge->end);
+					visited.push_back(edge->end);
+
 			}
 		}
+
+		
 	}
+
 	return false;
 
 }
+/*
 //=====================================================================================> DFS_CONNECTED 
 template<bool V>
 bool Grafo<pair<float,float>,V>::dfs_connected(int start){
@@ -333,6 +362,7 @@ vector<Edge<float>*> Grafo<pair<float,float>,V>::non_decreasing_edges(){
 	std::sort (sorted_edges.begin(), sorted_edges.end());
 	return sorted_edges;
 }
+*/
 
 /*
 =====================================================
