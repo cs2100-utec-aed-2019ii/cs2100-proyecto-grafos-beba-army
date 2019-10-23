@@ -56,8 +56,7 @@ class Grafo<pair<float,float>,V>
 		int nodeGrade(pair<float,float> index);
 		bool bfs(pair<float,float> starf, pair<float,float> find); 
 		bool dfs(pair<float,float> starf, pair<float,float> find); 
-		bool dfs_connected(int sartf);
-		void dfs_connected(stack<int>& pila, vector<int>& visited, Node<pair<float,float>>* curr);
+		bool dfs_connected(pair<float,float> start);
 		vector<Edge<float>*> non_decreasing_edges();
 
 
@@ -310,78 +309,47 @@ bool Grafo<pair<float,float>,V>::dfs(pair<float,float> start, pair<float,float> 
 	return false;
 
 }
-/*
-//=====================================================================================> DFS_CONNECTED 
+
 template<bool V>
-bool Grafo<pair<float,float>,V>::dfs_connected(int start){
+bool Grafo<pair<float,float>,V>::dfs_connected(pair<float,float> start){
+	stack<pair<float,float>> nodes_stack;
+	vector<pair<float,float>> visited;
 
-	stack<int> pila;
-	vector<int> visited(nodes.size(),0);
-	pila.push(start);
-	visited[start] = 1;
-	Node<pair<float,float>>* curr = nullptr;
+	pair<float,float> curr;
 
-	while(!pila.empty()){
-		curr = nodes[pila.top()];
-		cout << "(" << curr->value.first << "," << curr->value.second << ")" << " ";
+	nodes_stack.push(start);
+	visited.push_back(start);
 
-		for (auto edge : curr->edges){
-			if (!visited[edge->end]){
-				pila.push(edge->end);
-				visited[edge->end] = 1;
-				dfs_connected(pila,visited,nodes[edge->end]);
+	cout<<"\n";
+
+	while (!nodes_stack.empty()){
+		curr = nodes_stack.top();
+		cout << "Current node: (" << curr.first << "," << curr.second << ")\n";	
+		nodes_stack.pop();
+
+		for (auto edge : edges){
+			if (edge->start == curr && !findEdgePair(visited, edge->end)){
+					cout << "Inserting from edge: (" << curr.first << "," << curr.second << ") -> (" << edge->end.first << "," << edge->end.second << ")\n";
+					nodes_stack.push(edge->end);
+					visited.push_back(edge->end);
 			}
 		}
+	}
 
-		for (auto valor : visited){
-			if (!valor){
-				return false;
-			}
-		}
+	if (visited.size() == nodes.size())
 		return true;
-	}
+	else
+		return false;
+
 }
 
-template<bool V>
-void Grafo<pair<float,float>,V>::dfs_connected(stack<int>& pila, vector<int>& visited, Node<pair<float,float>>* curr){
-	cout << "(" << curr->value.first << "," << curr->value.second << ")" << " ";
-	for (auto edge : curr->edges){
-		if (!visited[edge->end]){
-			pila.push(edge->end);
-			visited[edge->end] = 1;
-			dfs_connected(pila,visited,nodes[edge->end]);
-		}
-	}
-	pila.pop();
-}
-//=====================================================================================|
-
+bool compare_edge_weight(Edge<float>* x, Edge<float>* y) {return (x->weight < y->weight);};
 template<bool V>
 vector<Edge<float>*> Grafo<pair<float,float>,V>::non_decreasing_edges(){
 	edge_list sorted_edges = edges;
-	std::sort (sorted_edges.begin(), sorted_edges.end());
+	std::sort (sorted_edges.begin(), sorted_edges.end(), compare_edge_weight);
 	return sorted_edges;
 }
-*/
-
-/*
-=====================================================
-  non_decreasing_edges no usando el vector de edges
-=====================================================
-
-template<bool V>
-vector<Edge<float>*> Grafo<pair<float,float>,V>::non_decreasing_edges(){
-	vector<Edge<float>*> orderedEdges;
-	for (auto i : nodes)
-		for (auto j : i->edges){
-			cout << "(" << j->start << "," << j->end << ")" << " ";
-			orderedEdges.emplace_back(j);
-		}	
-	std::sort (ordered_edges.begin(), orderedEdges.end());
-	return orderedEdges;
-}
-*/
-
 
 #endif
 
