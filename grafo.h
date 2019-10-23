@@ -8,6 +8,10 @@
 #include <limits>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdlib.h>
+#include <ctime>
 
 #include "Node.h"
 
@@ -60,6 +64,8 @@ class Grafo<pair<float,float>,V>
 		void dfs_connected(stack<int>& pila, vector<int>& visited, Node<pair<float,float>>* curr);
 		vector<Edge<float>*> non_decreasing_edges();
 
+		void save();
+
 
 		node_list getNodes(){
 			return nodes;
@@ -68,7 +74,6 @@ class Grafo<pair<float,float>,V>
 		~Grafo();
 };
 
-//Falta editar Copia para pasarle los edges
 template< bool V>
 Grafo<pair<float,float>,V>::Grafo(Grafo* miGrafo){
 	for(auto node: miGrafo->nodes){
@@ -81,6 +86,114 @@ Grafo<pair<float,float>,V>::Grafo(Grafo* miGrafo){
 
 template<bool V>
 Grafo<pair<float,float>,V>::Grafo(int opcion){
+	switch (opcion)
+	{
+	case 1://vtk
+		/* code */
+		break;
+
+
+	case 2:{//From disk ================================= Asumimos que el grafo esta correcto??????????????
+
+		string read;
+		int numNodes;
+
+		float val1, val2, val3, val4, weight;
+
+		ifstream file;
+
+		file.open("graph.txt");
+
+		getline(file,read);
+		stringstream stream(read);
+
+		stream>>numNodes;
+
+
+		if(file.is_open()){
+			for(int i = 0; i < numNodes; i++){
+
+				getline(file,read);
+				stringstream stream(read);
+
+				stream>>val1;
+				stream>>val2;
+
+				nodes.emplace_back(new Node<pair<float,float>>(pair<float,float>(val1,val2)));
+
+			}
+
+			while(getline(file,read)){
+				stringstream stream(read);
+				stream>>val1;
+				stream>>val2;
+				stream>>val3;
+				stream>>val4;
+				stream>>weight;
+
+				edges.emplace_back(new Edge<float>(pair<float,float>(val1,val2),pair<float,float>(val3,val4),weight));
+
+			}
+
+		}
+
+	// cout<<"\n\nGraph read result:\n";
+	// for(auto node : nodes){
+	// 	cout<<node->value.first<<" "<<node->value.second<<"\n";
+	// }
+	// for(auto edge : edges){
+	// 	cout<<edge->start.first<<" "<<edge->start.second<<" "<<edge->end.first<<" "<<edge->end.second<<" "<<edge->weight<<"\n";
+	// }
+
+
+		file.close();
+		break;
+	}
+
+
+	case 3:{//Random
+
+		srand(time(NULL));
+
+		int numNodes = rand() % 5 + 1;
+		int numEdges = rand() % (numNodes*(numNodes-1)) + 1;
+
+		float node1, node2, weight;
+		pair<float,float> val1, val2;
+
+		for(int i = 0; i < numNodes; i++){
+			val1 = pair<float,float>((rand() % 100) / pow(10,(rand() % 2)),(rand() % 100) / pow(10,(rand() % 2)));
+			addNode(val1);
+		}
+
+		while(edges.size() < numEdges){
+
+			node1 = rand() % numNodes;
+			node2 = rand() % numNodes;
+
+			val1 = getNodes()[node1]->value;
+			val2 = getNodes()[node2]->value;
+
+			weight = (rand() % 100) / pow(10,(rand() % 2 + 1));
+
+			addEdge(val1, val2, weight);
+		}
+
+	cout<<"\n\nRandom graph result:\n";
+	cout<<"Number of nodes: "<<numNodes<<"\n";
+	for(auto node : nodes){
+		cout<<node->value.first<<" "<<node->value.second<<"\n";
+	}
+	cout<<"\nNumber of edges: "<<numEdges<<"\n";
+	for(auto edge : edges){
+		cout<<edge->start.first<<","<<edge->start.second<<" -> "<<edge->end.first<<","<<edge->end.second<<" : "<<edge->weight<<"\n";
+	}
+
+	}
+	
+	default:
+		break;
+	}
 
 }//Parametro
 
@@ -96,6 +209,24 @@ Grafo<pair<float,float>,V>::~Grafo(){
 }
 
 template<bool V>
+void Grafo<pair<float,float>,V>::save(){
+
+	ofstream file;
+	file.open("graph.txt");
+
+	file<<nodes.size()<<"\n";
+	for(auto node : nodes){
+		file<<node->value.first<<" "<<node->value.second<<"\n";
+	}
+	for(auto edge : edges){
+		file<<edge->start.first<<" "<<edge->start.second<<" "<<edge->end.first<<" "<<edge->end.second<<" "<<edge->weight<<"\n";
+	}
+
+	file.close();
+	
+}
+
+template<bool V>
 bool Grafo<pair<float,float>,V>::findEdgePair(vector<pair<float,float>> visited, pair<float,float> find){
 	for(auto item: visited){
 		if(item == find){
@@ -107,6 +238,12 @@ bool Grafo<pair<float,float>,V>::findEdgePair(vector<pair<float,float>> visited,
 
 template<bool V>
 void Grafo<pair<float,float>,V>::addNode(pair<float,float> val){
+	for(auto node : nodes){
+		if(node->value == val){
+			cout<<"Duplicate node.\n";
+			return;
+		}
+	}
 	nodes.emplace_back(new Node<pair<float,float>>(val));
 }
 
@@ -116,6 +253,14 @@ void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,flo
 		cout << "Loops not allowed\n";
 		return;
 	}
+
+	for(auto edge : edges){
+		if(edge->start== start && edge->end == end){
+			cout<<"Duplicate edge: ("<<edge->start.first<<","<<edge->start.second<<") -> ("<<edge->end.first<<","<<edge->end.second<<")\n";
+			return;
+		}
+	}
+
 	cout << "New edge: (" << start.first<<","<<start.second << ") -> (" << end.first<<","<<end.second << ") - weight: " << weight << endl;
 	edges.emplace_back(new Edge<float>(start, end, weight));
 
@@ -130,6 +275,13 @@ void Grafo<pair<float,float>,true>::addEdge(pair<float,float> start, pair<float,
 		return;
 	}
 
+	for(auto edge : edges){
+		if(edge->start== start && edge->end == end){
+			cout<<"Duplicate edge.\n";
+			return;
+		}
+	}
+
 	cout << "New edge: (" << start.first<<","<<start.second << ") -> (" << end.first<<","<<end.second << ") - weight: " << weight << endl;
 	edges.emplace_back(new Edge<float>(start, end, weight));
 }
@@ -139,6 +291,13 @@ void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,flo
 	if (start == end){
 		cout << "Loops not allowed\n";
 		return;
+	}
+
+	for(auto edge : edges){
+		if(edge->start== start && edge->end == end){
+			cout<<"Duplicate edge.\n";
+			return;
+		}
 	}
 	
 	float weight = pow(pow(start.first-end.first,2)-pow(start.second-end.second,2),2);
@@ -156,6 +315,13 @@ void Grafo<pair<float,float>,true>::addEdge(pair<float,float> start, pair<float,
 	if(start == end){
 		cout<<"Loops not allowed\n";
 		return;
+	}
+
+	for(auto edge : edges){
+		if(edge->start== start && edge->end == end){
+			cout<<"Duplicate edge.\n";
+			return;
+		}
 	}
 
 	float weight = pow(pow(start.first-start.first,2)-pow(start.second-end.second,2),2);

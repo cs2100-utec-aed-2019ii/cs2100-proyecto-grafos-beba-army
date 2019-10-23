@@ -59,6 +59,9 @@ int main(){
     nodGrafo->deleteEdge(pair<int,int>(0,0),pair<int,int>(4,4));
     cout<<"BFS for 0 to 3: "<<nodGrafo->bfs(pair<int,int>(0,0),pair<int,int>(3,3))<<endl;
 
+    //nodGrafo->save();
+
+    Grafo<pair<float,float>,false>* test = new Grafo<pair<float,float>,false>(3);
 
 
     return 0;
