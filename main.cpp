@@ -5,7 +5,7 @@ using namespace std;
 
 int main(){
 
-    Grafo<pair<float,float>,false>* nodGrafo = new Grafo<pair<float,float>,false>();
+    Grafo<pair<float,float>,true>* nodGrafo = new Grafo<pair<float,float>,true>();
     Grafo<pair<float,float>,true>* dGrafo = new Grafo<pair<float,float>,true>();
 
     nodGrafo->addNode(pair<float,float>(0,0));
@@ -61,7 +61,7 @@ int main(){
 
     //nodGrafo->save();
 
-    Grafo<pair<float,float>,false>* test = new Grafo<pair<float,float>,false>(3);
+    Grafo<pair<float,float>,true>* test = new Grafo<pair<float,float>,true>(3);
 
 
     return 0;

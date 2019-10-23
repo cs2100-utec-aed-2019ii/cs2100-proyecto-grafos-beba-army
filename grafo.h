@@ -197,6 +197,121 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 
 }//Parametro
 
+template<>
+Grafo<pair<float,float>,true>::Grafo(int opcion){
+	switch (opcion)
+	{
+	case 1://vtk
+		/* code */
+		break;
+
+
+	case 2:{//From disk ================================= Asumimos que el grafo esta correcto??????????????
+
+		string read;
+		int numNodes;
+
+		float val1, val2, val3, val4, weight;
+
+		ifstream file;
+
+		file.open("graph.txt");
+
+		getline(file,read);
+		stringstream stream(read);
+
+		stream>>numNodes;
+
+
+		if(file.is_open()){
+			for(int i = 0; i < numNodes; i++){
+
+				getline(file,read);
+				stringstream stream(read);
+
+				stream>>val1;
+				stream>>val2;
+
+				nodes.emplace_back(new Node<pair<float,float>>(pair<float,float>(val1,val2)));
+
+			}
+
+			while(getline(file,read)){
+				stringstream stream(read);
+				stream>>val1;
+				stream>>val2;
+				stream>>val3;
+				stream>>val4;
+				stream>>weight;
+
+				edges.emplace_back(new Edge<float>(pair<float,float>(val1,val2),pair<float,float>(val3,val4),weight));
+
+			}
+
+		}
+
+	// cout<<"\n\nGraph read result:\n";
+	// for(auto node : nodes){
+	// 	cout<<node->value.first<<" "<<node->value.second<<"\n";
+	// }
+	// for(auto edge : edges){
+	// 	cout<<edge->start.first<<" "<<edge->start.second<<" "<<edge->end.first<<" "<<edge->end.second<<" "<<edge->weight<<"\n";
+	// }
+
+
+		file.close();
+		break;
+	}
+
+
+	case 3:{//Random
+
+		srand(time(NULL));
+
+		int numNodes = rand() % 5 + 1;
+		int numEdges = rand() % ((numNodes*(numNodes-1)) + 1);
+
+		float node1, node2, weight;
+		pair<float,float> val1, val2;
+
+		for(int i = 0; i < numNodes; i++){
+			val1 = pair<float,float>((rand() % 100) / pow(10,(rand() % 2)),(rand() % 100) / pow(10,(rand() % 2)));
+			addNode(val1);
+		}
+
+		while(edges.size() < numEdges){
+
+			node1 = rand() % numNodes;
+			node2 = rand() % numNodes;
+
+			val1 = getNodes()[node1]->value;
+			val2 = getNodes()[node2]->value;
+
+			weight = (rand() % 100) / pow(10,(rand() % 2 + 1));
+
+			edges.emplace_back(new Edge<float>(val1, val2, weight));
+		}
+
+	cout<<"\n\nRandom graph result:\n";
+	cout<<"Number of nodes: "<<numNodes<<"\n";
+	for(auto node : nodes){
+		cout<<node->value.first<<" "<<node->value.second<<"\n";
+	}
+	cout<<"\nNumber of edges: "<<numEdges<<"\n";
+	for(auto edge : edges){
+		cout<<edge->start.first<<","<<edge->start.second<<" -> "<<edge->end.first<<","<<edge->end.second<<" : "<<edge->weight<<"\n";
+	}
+
+	}
+	
+	default:
+		break;
+	}
+
+}//Parametro
+
+
+
 template<bool V>
 Grafo<pair<float,float>,V>::~Grafo(){
 	for(auto node: nodes){
