@@ -64,12 +64,12 @@ template<>
 struct Edge<float>
 {
 
-    int start;
+    pair<float,float> start;
     float weight;
-    int end;
+    pair<float,float> end;
 
-    Edge(int start, int end); //Euclidean distance
-    Edge(int start, int end, float _weight); //Parameter
+    Edge(pair<float,float> start, pair<float,float> end); //Euclidean distance
+    Edge(pair<float,float> start, pair<float,float> end, float _weight); //Parameter
 		bool operator< (const Edge &other) const{
 			return weight < other.weight;
 		}
@@ -80,7 +80,7 @@ struct Edge<float>
 
 
 
-Edge<float>::Edge(int start, int end){
+Edge<float>::Edge(pair<float,float> start, pair<float,float> end){
     this->start = start;
 
     this->end = end;
@@ -88,7 +88,7 @@ Edge<float>::Edge(int start, int end){
 
 }
 
-Edge<float>::Edge(int start, int end, float weight){
+Edge<float>::Edge(pair<float,float> start, pair<float,float> end, float weight){
     this->start = start;
     this->weight = weight;
     this->end = end;
@@ -107,3 +107,4 @@ Edge< float>::~Edge(){
 
 
 #endif
+
