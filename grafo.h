@@ -65,6 +65,8 @@ class Grafo<pair<float,float>,V>
 		vector<Edge<float>*> non_decreasing_edges();
 
 		void save();
+		vector<pair<float,float>> getNeighbors(pair<float,float> index);
+		bool inNeighborhood(pair<float,float> start, pair<float,float> neighbor);
 
 
 		node_list getNodes(){
@@ -270,6 +272,7 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 
 		int numNodes = rand() % 5 + 1;
 		int numEdges = rand() % ((numNodes*(numNodes-1)) + 1);
+		bool duplicate;
 
 		float node1, node2, weight;
 		pair<float,float> val1, val2;
@@ -280,6 +283,7 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 		}
 
 		while(edges.size() < numEdges){
+			duplicate = false;
 
 			node1 = rand() % numNodes;
 			node2 = rand() % numNodes;
@@ -289,7 +293,16 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 
 			weight = (rand() % 100) / pow(10,(rand() % 2 + 1));
 
-			edges.emplace_back(new Edge<float>(val1, val2, weight));
+			for(auto edge: edges){
+				if(edge->start == val1 && edge->end == val2 || val1 == val2){
+					duplicate = true;
+				}
+			}
+
+			if(!duplicate){
+				edges.emplace_back(new Edge<float>(val1, val2, weight));
+			}
+			
 		}
 
 	cout<<"\n\nRandom graph result:\n";
@@ -591,6 +604,54 @@ bool Grafo<pair<float,float>,V>::dfs(pair<float,float> start, pair<float,float> 
 	return false;
 
 }
+
+template<bool V>
+vector<pair<float,float>> Grafo<pair<float,float>,V>::getNeighbors(pair<float,float> index){
+
+	vector<pair<float,float>> neighbors;
+
+	for(auto edge: edges){
+		if(edge->start == index){
+			neighbors.push_back(edge->end);
+		}
+	}
+
+	return neighbors;
+}
+
+template<bool V>
+bool Grafo<pair<float,float>,V>::inNeighborhood(pair<float,float> start, pair<float,float> neighbor){
+
+	float meanWeight = 0;
+	int edgeCount = 0;
+	Edge<float>* connection = nullptr;
+
+	for (auto edge: edges){
+		if(edge->start == start){
+			//cout<<"Edge found with end: "<<edge->end.first<<","<<edge->end.second<<" and weight: "<<edge->weight<<"\n";
+			meanWeight+=edge->weight;
+			edgeCount++;
+			if(edge->end == neighbor){
+				connection = edge;
+			}
+		}
+	}
+
+	if(!connection){
+		cout<<"Nodes are not connected.\n";
+		return false;
+	}
+
+	meanWeight /= edgeCount;
+	//cout<<"Mean weight: "<<meanWeight<<"\n";
+
+	if(connection->weight <= meanWeight){
+		return true;
+	}
+	return false;
+}
+
+
 /*
 //=====================================================================================> DFS_CONNECTED 
 template<bool V>

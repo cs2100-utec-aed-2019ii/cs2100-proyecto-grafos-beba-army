@@ -5,7 +5,7 @@ using namespace std;
 
 int main(){
 
-    Grafo<pair<float,float>,true>* nodGrafo = new Grafo<pair<float,float>,true>();
+    Grafo<pair<float,float>,false>* nodGrafo = new Grafo<pair<float,float>,false>();
     Grafo<pair<float,float>,true>* dGrafo = new Grafo<pair<float,float>,true>();
 
     nodGrafo->addNode(pair<float,float>(0,0));
@@ -58,11 +58,22 @@ int main(){
     cout<<"BFS for 0 to 3: "<<nodGrafo->bfs(pair<int,int>(0,0),pair<int,int>(3,3))<<endl;
     nodGrafo->deleteEdge(pair<int,int>(0,0),pair<int,int>(4,4));
     cout<<"BFS for 0 to 3: "<<nodGrafo->bfs(pair<int,int>(0,0),pair<int,int>(3,3))<<endl;
+    nodGrafo->addEdge(pair<int,int>(0,0),pair<int,int>(4,4),0.3);
 
     //nodGrafo->save();
 
-    Grafo<pair<float,float>,true>* test = new Grafo<pair<float,float>,true>(3);
+    //Grafo<pair<float,float>,true>* test = new Grafo<pair<float,float>,true>(3);
 
+    auto neighbors = nodGrafo->getNeighbors(pair<float,float>(4,4));
+
+    cout<<"Neighbors of (4,4):\n";
+    for(auto neighbor: neighbors){
+      cout<<neighbor.first<<","<<neighbor.second<<"\n";
+    }
+
+    cout<<"Neighborhood test (0,0) and (4,4): "<<nodGrafo->inNeighborhood(pair<float,float>(0,0),pair<float,float>(4,4))<<"\n";
+    nodGrafo->addEdge(pair<float,float>(0,0),pair<float,float>(3,3),0.2);
+    cout<<"Neighborhood test (0,0) and (4,4): "<<nodGrafo->inNeighborhood(pair<float,float>(0,0),pair<float,float>(4,4))<<"\n";
 
     return 0;
 }   
