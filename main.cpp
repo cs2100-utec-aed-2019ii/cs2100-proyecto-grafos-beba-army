@@ -121,7 +121,7 @@ GLvoid window_display(){
 
 	glutSwapBuffers();
 	glFlush();
-  cout<<"OPCIONES: \nn: insertar nodo.\ne: insertar edge.\ns: seleccionar nodos.\nb: borrar nodo.\nx: guardar grafo.\n";
+  cout<<"OPCIONES: \nn: insertar nodo.\ne: insertar edge.\ns: seleccionar nodos.\nb: borrar nodo.\nd: borrar edge.\nx: guardar grafo.\n";
 
   cin>>opcion;
 
@@ -231,6 +231,22 @@ GLvoid window_display(){
       cout<<"\nCoordenada y: ";
       cin>>node1_y;
       glutGraph->deleteNode(pair<float,float>(node1_x,node1_y));
+      colores.clear();
+      break;
+    }
+    case 'd':{
+      cout<<"Nodo 1:\nCoordenada x: ";
+      cin>>node1_x;
+      cout<<"\nCoordenada y: ";
+      cin>>node1_y;
+      cout<<"\n";
+      cout<<"Nodo 2:\nCoordenada x: ";
+      cin>>node2_x;
+      cout<<"\nCoordenada y: ";
+      cin>>node2_y;
+      cout<<"\n";
+      glutGraph->deleteEdge(pair<float,float>(node1_x,node1_y),pair<float,float>(node2_x,node2_y));
+      colores.clear();
       break;
     }
     case 'x':{
