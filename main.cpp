@@ -13,10 +13,11 @@ float rotacion = 0.0;
 
 using namespace std;
 
-#ifdef OGL
+//#ifdef OGL
 
 Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(2);
 map<pair<float,float>,bool> colores;
+pair<float,float> root;
 
 GLvoid initGL(){
 	glClearColor(0, 0, 0, 1);
@@ -82,7 +83,7 @@ GLvoid window_display(){
     else{
       glColor3f(1,1,1);
     }
-    glutSolidSphere(30,10,10);
+    glutSolidSphere(20,10,10);
     glPopMatrix();
   }
 
@@ -121,7 +122,7 @@ GLvoid window_display(){
 
 	glutSwapBuffers();
 	glFlush();
-  cout<<"OPCIONES: \nn: insertar nodo.\ne: insertar edge.\ns: seleccionar nodos.\nb: borrar nodo.\nd: borrar edge.\nx: guardar grafo.\n";
+  cout<<"OPCIONES: \nn: insertar nodo.\ne: insertar edge.\ns: seleccionar nodos.\nb: borrar nodo.\nd: borrar edge.\nx: guardar grafo.\n2: Bipartite check.\nh: neighborhood.\n";
 
   cin>>opcion;
 
@@ -145,10 +146,16 @@ GLvoid window_display(){
       cin>>node2_x;
       cout<<"\nCoordenada y: ";
       cin>>node2_y;
-      cout<<"\nPeso: ";
+      cout<<"\nPeso: (-1 para peso automatico.)";
       cin>>weight;
       cout<<"\n"; 
-      glutGraph->addEdge(pair<float,float>(node1_x,node1_y),pair<float,float>(node2_x,node2_y),weight);   
+      if(weight == -1){
+        cout<<"No weight!\n";
+        glutGraph->addEdge(pair<float,float>(node1_x,node1_y),pair<float,float>(node2_x,node2_y));
+      }
+      else{
+        glutGraph->addEdge(pair<float,float>(node1_x,node1_y),pair<float,float>(node2_x,node2_y),weight);  
+      } 
       break;  
 
     }
@@ -234,6 +241,25 @@ GLvoid window_display(){
       colores.clear();
       break;
     }
+    case 'h':{
+
+      colores.clear();
+      cout<<"Coordenada x: ";
+      cin>>node1_x;
+      cout<<"\nCoordenada y: ";
+      cin>>node1_y;
+      root = pair<float,float>(node1_x, node1_y);
+      vector<pair<float,float>> neighbors = glutGraph->getNeighbors(pair<float,float>(node1_x,node1_y));
+      colores[pair<float,float>(node1_x,node1_y)] = true;
+
+      for(auto node: neighbors){
+        if(glutGraph->inNeighborhood(pair<float,float>(node1_x,node1_y),pair<float,float>(node.first,node.second))){
+          colores[pair<float,float>(node.first,node.second)] = true;
+        }
+
+      }      
+      break;
+    }
     case 'd':{
       cout<<"Nodo 1:\nCoordenada x: ";
       cin>>node1_x;
@@ -253,6 +279,23 @@ GLvoid window_display(){
       glutGraph->save();
       break;
     }
+    case '2':{
+      if(glutGraph->bipartite()){
+        cout<<"Es bipartito.\n";
+        }
+        else{
+          cout<<"No es bipartito.\n";
+        }
+        break;
+    }
+    case 'g':{
+      cout<<"Nodo 1:\nCoordenada x: ";
+      cin>>node1_x;
+      cout<<"\nCoordenada y: ";
+      cin>>node1_y;
+      cout<<"Grado: "<<glutGraph->nodeGrade(pair<float,float>(node1_x,node1_y));
+      break;
+    }
     default:{
       cout<<"Opcion invalida.\n";
       break;
@@ -262,7 +305,7 @@ GLvoid window_display(){
 
 }
 
-#endif
+//#endif
 
 
 

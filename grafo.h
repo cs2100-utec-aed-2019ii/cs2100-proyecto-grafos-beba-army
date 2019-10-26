@@ -299,7 +299,6 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 			val1 = getNodes()[node1]->value;
 			val2 = getNodes()[node2]->value;
 
-			weight = (rand() % 100) / pow(10,(rand() % 2 + 1));
 
 			for(auto edge: edges){
 				if(edge->start == val1 && edge->end == val2 || val1 == val2){
@@ -307,8 +306,11 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 				}
 			}
 
+			weight = pow(pow(val1.first-val2.first,2)+pow(val1.second-val2.second,2),0.5);
+
+
 			if(!duplicate){
-				edges.emplace_back(new Edge<float>(val1, val2, weight));
+				edges.emplace_back(new Edge<float>(val1, val2,weight));
 			}
 			
 		}
@@ -390,6 +392,27 @@ void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,flo
 		return;
 	}
 
+	bool missing_S = true;
+	bool missing_E = true;
+
+
+	for(auto node: nodes){
+		if(node->value == start){
+			missing_S = false;
+		}
+		if(node->value == end){
+			missing_E = false;
+		}
+		if(!missing_E && !missing_S){
+			break;
+		}
+	}
+
+	if(missing_S || missing_E){
+		cout<<"Nodos invalidos.\n";
+		return;
+	}
+
 	for(auto edge : edges){
 		if(edge->start== start && edge->end == end){
 			cout<<"Duplicate edge: ("<<edge->start.first<<","<<edge->start.second<<") -> ("<<edge->end.first<<","<<edge->end.second<<")\n";
@@ -411,6 +434,27 @@ void Grafo<pair<float,float>,true>::addEdge(pair<float,float> start, pair<float,
 		return;
 	}
 
+	bool missing_S = true;
+	bool missing_E = true;
+
+
+	for(auto node: nodes){
+		if(node->value == start){
+			missing_S = false;
+		}
+		if(node->value == end){
+			missing_E = false;
+		}
+		if(!missing_E && !missing_S){
+			break;
+		}
+	}
+
+	if(missing_S || missing_E){
+		cout<<"Nodos invalidos.\n";
+		return;
+	}
+
 	for(auto edge : edges){
 		if(edge->start== start && edge->end == end){
 			cout<<"Duplicate edge.\n";
@@ -429,6 +473,27 @@ void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,flo
 		return;
 	}
 
+	bool missing_S = true;
+	bool missing_E = true;
+
+
+	for(auto node: nodes){
+		if(node->value == start){
+			missing_S = false;
+		}
+		if(node->value == end){
+			missing_E = false;
+		}
+		if(!missing_E && !missing_S){
+			break;
+		}
+	}
+
+	if(missing_S || missing_E){
+		cout<<"Nodos invalidos.\n";
+		return;
+	}
+
 	for(auto edge : edges){
 		if(edge->start== start && edge->end == end){
 			cout<<"Duplicate edge.\n";
@@ -436,7 +501,7 @@ void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,flo
 		}
 	}
 	
-	float weight = pow(pow(start.first-end.first,2)-pow(start.second-end.second,2),2);
+	float weight = pow(pow(start.first-end.first,2)+pow(start.second-end.second,2),0.5);
 
 	edges.emplace_back(new Edge<float>(start, end, weight));
 	edges.emplace_back(new Edge<float>(end, start, weight));
@@ -453,6 +518,27 @@ void Grafo<pair<float,float>,true>::addEdge(pair<float,float> start, pair<float,
 		return;
 	}
 
+	bool missing_S = true;
+	bool missing_E = true;
+
+
+	for(auto node: nodes){
+		if(node->value == start){
+			missing_S = false;
+		}
+		if(node->value == end){
+			missing_E = false;
+		}
+		if(!missing_E && !missing_S){
+			break;
+		}
+	}
+
+	if(missing_S || missing_E){
+		cout<<"Nodos invalidos.\n";
+		return;
+	}
+
 	for(auto edge : edges){
 		if(edge->start== start && edge->end == end){
 			cout<<"Duplicate edge.\n";
@@ -460,7 +546,7 @@ void Grafo<pair<float,float>,true>::addEdge(pair<float,float> start, pair<float,
 		}
 	}
 
-	float weight = pow(pow(start.first-start.first,2)-pow(start.second-end.second,2),2);
+	float weight = pow(pow(start.first-end.first,2)+pow(start.second-end.second,2),0.5);
 	edges.emplace_back(new Edge<float>(start, end, weight));
 
 	cout << "New edge: (" << start.first<<","<<start.second << ") -> (" << end.first<<","<<end.second << ") - weight: " << weight << endl;
@@ -654,6 +740,7 @@ bool Grafo<pair<float,float>,V>::inNeighborhood(pair<float,float> start, pair<fl
 	//cout<<"Mean weight: "<<meanWeight<<"\n";
 
 	if(connection->weight <= meanWeight){
+		cout<<"Weight: "<<connection->weight<<" smaller than "<<meanWeight<<"\n";
 		return true;
 	}
 	return false;
@@ -662,7 +749,7 @@ bool Grafo<pair<float,float>,V>::inNeighborhood(pair<float,float> start, pair<fl
 
 template<bool V>
 bool Grafo<pair<float,float>,V>::bipartite(){
-	cout<<"Bipartite start\n";
+	//cout<<"Bipartite start\n";
 	map<pair<float,float>,int> color;
 	pair<float,float> current;
 	queue<pair<float,float>> nodos;
