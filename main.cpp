@@ -31,7 +31,7 @@ GLvoid window_reshape(GLsizei width, GLsizei height){
 	glLoadIdentity();
 	glOrtho(0.0f, ANCHO, 0.0f, ALTO, 0.0f, PROFUNDIDAD);
 	glMatrixMode(GL_MODELVIEW);
-//	gluLookAt(0,50, 100, 0,0,0, 0, 1, 0);
+//gluLookAt(0,50, 100, 0,0,0, 0, 1, 0);
 
 }
 
@@ -194,8 +194,6 @@ GLvoid window_display(){
 
 		//cout<<"Current node: ("<<current.first<<","<<current.second<<") looking for: ("<<find.first<<","<<find.second<<")\n";	
 
-
-		
 		nodos.pop();
 
 		if(current.first == find.first && current.second == find.second){
@@ -208,11 +206,8 @@ GLvoid window_display(){
 					nodos.push(edge->end);
 					visited.push_back(edge->end);
           camino[edge->end] = edge->start;
-
 			}
 		}
-
-		
 	}
 
 	
@@ -318,41 +313,60 @@ int main(int argc, char* argv[]){
     Grafo<pair<float,float>,true>* test = new Grafo<pair<float,float>,true>(2);
 
     nodGrafo->addNode(pair<float,float>(0,0));
-    nodGrafo->addNode(pair<float,float>(1,1));
-    nodGrafo->addNode(pair<float,float>(2,2));
-    nodGrafo->addNode(pair<float,float>(3,3));
-    nodGrafo->addNode(pair<float,float>(4,4));
+    nodGrafo->addNode(pair<float,float>(0,-10));
+    nodGrafo->addNode(pair<float,float>(0,10));
+    nodGrafo->addNode(pair<float,float>(5,-5));
+    nodGrafo->addNode(pair<float,float>(5,0));
+    nodGrafo->addNode(pair<float,float>(5,5));
+    nodGrafo->addNode(pair<float,float>(-5,-5));
+    nodGrafo->addNode(pair<float,float>(-5,0));
+    nodGrafo->addNode(pair<float,float>(-5,5));
 
+    nodGrafo->addEdge({0,0}  ,{5,0}  ,2);    
+    nodGrafo->addEdge({0,0}  ,{-5,0} ,6);    
+    nodGrafo->addEdge({0,0}  ,{-5,-5},7);    
+    nodGrafo->addEdge({0,10} ,{5,5}  ,9);    
+    nodGrafo->addEdge({0,10} ,{-5,5} ,10);    
+    nodGrafo->addEdge({0,-10},{5,-5} ,4);    
+    nodGrafo->addEdge({0,-10},{-5,-5},8);    
+    nodGrafo->addEdge({5,-5} ,{5,0}  ,8);    
+    nodGrafo->addEdge({5,-5} ,{-5,-5},11);    
+    nodGrafo->addEdge({5,0}  ,{5,5}  ,7);    
+    nodGrafo->addEdge({5,0}  ,{-5,5} ,4);    
+    nodGrafo->addEdge({5,5}  ,{-5,5} ,14);    
+    nodGrafo->addEdge({-5,-5},{-5,0} ,2);    
+    nodGrafo->addEdge({-5,0} ,{-5,5} ,1);    
 
-    nodGrafo->addEdge(pair<float,float>(0,0),pair<float,float>(1,1),1);    
-    nodGrafo->addEdge(pair<float,float>(1,1),pair<float,float>(2,2),2);
-    nodGrafo->addEdge(pair<float,float>(2,2),pair<float,float>(3,3),3);
+		/*
+		==========
+		  Pruebas
+		==========
+		auto nodGrafoKruskal = nodGrafo->mst_kruskal();
+		cout << "================Kruskal: \n";
+		for (auto i : nodGrafoKruskal){
+			cout << "(" << i->start.first << "," << i->start.second << ") -> " << "(" << i->end.first << "," << i->end.second << ") || ";
+		}
+		
+		cout << "============ density: " << nodGrafo->density() << "\n" ;
+    cout<<"===========Try to loop: \n";
+    nodGrafo->addEdge({0,0},{0,0},4);
+ 
+		cout << "=========Edge weights:" << endl;
+		auto sorted_edges = nodGrafo->non_decreasing_edges();
+		for (auto i : sorted_edges)
+		 cout << i->weight << " ";
 
-    cout<<"Trying to add loop: \n";
-    nodGrafo->addEdge(pair<float,float>(4,4),pair<float,float>(4,4),4);
-
-		// cout << "SHOW ALL EDGES" << endl;
-		// auto sorted_edges = nodGrafo->non_decreasing_edges();
-		// for (auto i : sorted_edges)
-		// 	cout << i->weight << " ";
-
-    //Grafo<pair<float,float>,false>* _nodGrafo = new Grafo<pair<float,float>,false>(nodGrafo);
-
-    cout<<"First value of node 0: "<<nodGrafo->getNodes()[0]->value.first<<endl;
-    cout<<"First value of node 1: "<<nodGrafo->getNodes()[1]->value.first<<endl;
-
-    cout<<"Node 0 grade: "<<nodGrafo->nodeGrade(pair<float,float>(0,0))<<endl;
-    
-    cout<<"BFS and DFS tests:\n";
-
-    cout<<"BFS for 0 to 3: "<<nodGrafo->bfs(pair<float,float>(0,0),pair<float,float>(3,3))<<endl;
+		===================
+		 BFS and DFS tests
+		===================
+    cout<<"BFS for 0 to 3: "<<nodGrafo->bfs({0,0},{})<<endl;
     cout<<"BFS for 0 to 4: "<<nodGrafo->bfs(pair<float,float>(0,0),pair<float,float>(4,4))<<endl;
 
     cout<<"DFS for 0 to 3: "<<nodGrafo->dfs(pair<float,float>(0,0),pair<float,float>(3,3))<<endl;
     cout<<"DFS for 0 to 4: "<<nodGrafo->dfs(pair<float,float>(0,0),pair<float,float>(4,4))<<endl;
 
 		cout << "LISTADO DE PUNTOS "<<endl;
-		//cout << "SALE =====>" << nodGrafo->dfs_connected(0) << endl;
+		cout << nodGrafo->connected() << "\n";
 
     cout<<"DeleteNode test: \n";
     nodGrafo->deleteNode(pair<float,float>(1,1));
@@ -364,14 +378,19 @@ int main(int argc, char* argv[]){
     nodGrafo->addEdge(pair<float,float>(0,0),pair<float,float>(4,4),0.3);
 
     cout<<"DeleteEdge test: \n";
+
+    cout<<"BFS for 0 to 3: "<<nodGrafo->bfs(pair<int,int>(0,0),pair<int,int>(3,3))<<endl;
+    nodGrafo->deleteEdge(pair<int,int>(0,0),pair<int,int>(4,4));
+    cout<<"BFS for 0 to 3: "<<nodGrafo->bfs(pair<int,int>(0,0),pair<int,int>(3,3))<<endl;
+
     cout<<"BFS for 0 to 3: "<<nodGrafo->bfs(pair<float,float>(0,0),pair<float,float>(3,3))<<endl;
     nodGrafo->deleteEdge(pair<float,float>(0,0),pair<float,float>(4,4));
     cout<<"BFS for 0 to 3: "<<nodGrafo->bfs(pair<float,float>(0,0),pair<float,float>(3,3))<<endl;
     nodGrafo->addEdge(pair<float,float>(0,0),pair<float,float>(4,4),0.3);
 
-    //nodGrafo->save();
+    nodGrafo->save();
 
-    //Grafo<pair<float,float>,true>* test = new Grafo<pair<float,float>,true>(3);
+    Grafo<pair<float,float>,true>* test = new Grafo<pair<float,float>,true>(3);
 
     auto neighbors = nodGrafo->getNeighbors(pair<float,float>(4,4));
 
@@ -386,10 +405,12 @@ int main(int argc, char* argv[]){
 
     cout<<"\n\nBipartite: "<<test->bipartite();
 
+		*/
+
 #endif
 
 #ifdef OGL
-    //OPENGL TESTS=========================================================
+  //OPENGL TESTS=========================================================
 
 
   // glutGraph->addNode(pair<float,float>(100,100));
@@ -413,7 +434,6 @@ int main(int argc, char* argv[]){
 	glutMainLoop();
 
 #endif
-
-
-    return 0;
+  return 0;
 }   
+
