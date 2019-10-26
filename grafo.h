@@ -12,6 +12,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <ctime>
+#include <GL/glut.h>
 
 #include "Node.h"
 
@@ -71,6 +72,9 @@ class Grafo<pair<float,float>,V>
 
 		node_list getNodes(){
 			return nodes;
+		}
+		edge_list getEdges(){
+			return edges;
 		}
 
 		~Grafo();
@@ -157,14 +161,16 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 
 		srand(time(NULL));
 
-		int numNodes = rand() % 5 + 1;
-		int numEdges = rand() % (numNodes*(numNodes-1)) + 1;
+		int numNodes = rand() % 10 + 1;
+		int numEdges = (numNodes == 1)?0: rand() % (numNodes*(numNodes-1));
+
+		
 
 		float node1, node2, weight;
 		pair<float,float> val1, val2;
 
 		for(int i = 0; i < numNodes; i++){
-			val1 = pair<float,float>((rand() % 100) / pow(10,(rand() % 2)),(rand() % 100) / pow(10,(rand() % 2)));
+			val1 = pair<float,float>(pow(-1,rand() % 2)*(rand() % 585),pow(-1,rand() % 2)*(rand() % 585) );
 			addNode(val1);
 		}
 
