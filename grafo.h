@@ -5,7 +5,6 @@
 #include <math.h>
 #include <stack>
 #include <queue>
-#include <functional>
 #include <limits>
 #include <algorithm>
 
@@ -54,14 +53,15 @@ class Grafo<pair<float,float>,V>
 		void deleteEdge(pair<float,float> start, pair<float,float> end);  
 
 		int nodeGrade(pair<float,float> index);
+		bool density(); 
+		
 		bool bfs(pair<float,float> starf, pair<float,float> find); 
 		bool dfs(pair<float,float> starf, pair<float,float> find); 
 		bool dfs_connected(pair<float,float> start);
+		
 		vector<Edge<float>*> non_decreasing_edges();
 		vector<Edge<float>*> mst_kruskal();
 		vector<Edge<float>*> mst_prim();
-		bool density(); 
-
 
 		node_list getNodes(){
 			return nodes;
@@ -413,17 +413,48 @@ bool Grafo<pair<float,float>, false>::density(){
 		return true;
 };
 
+
+bool already_visited(pair<float,float> value, std::vector<Node<pair<float,float>>*> list){
+	for (auto i : list)
+		if (value == i->value) 
+			return true;
+	return false;
+};
+
+Node<pair<float,float>>* pointer_home(pair<float,float> value, vector<Node<pair<float,float>>*> nodes){
+	for (auto i : nodes)
+		if (i->value == value)
+			return i;
+	return nullptr;
+	std::cout << "NO SE ENCONTRO EL NODO <-- funcion: pointer_home\n";
+};
+
 template<>
-vector<Edge<float>*> Grafo<pair<float,float>, false>::mst_prim(){ 
+std::vector<Edge<float>*> Grafo<pair<float,float>, false>::mst_prim(){ 
+	std::vector<Edge<float>*> result;
 	auto comp = [](Edge<float>* a, Edge<float>* b){ return a->weight < b->weight;
 	};
-	priority_queue<Edge<float>*,std::vector<Edge<float>*>, comp> pqueue;
-	
-	while(!pqueue.empty()){
-		Edge<float>* p = pqueue.front();
-		int q = p->first;
+	priority_queue<Edge<float>*, std::vector<Edge<float>*>, comp> p_queue;
+	std::stack<pair<float,float>> visited;
+
+	visited.emplace(nodes[1]->value);
+	for (auto i : nodes[1]->edges)
+		p_queue.push(i);
+
+	while(!p_queue.empty()){
+		Edge<float>* front_edge = p_queue.front();
+		auto e_value = front_edge->end;
+		auto pointer = pointer_home(e_value, nodes);
+		if (!already_visited(e_value, p_queue)){
+			result.emplace_back(front_edge);
+			visited.emplace(e_value);		
+			for (auto i : pointer->edges)
+				p_queue.push(i);
+		}
+		p_queue.pop();
 	}
 		
+	return result;
 };
 
 #endif
