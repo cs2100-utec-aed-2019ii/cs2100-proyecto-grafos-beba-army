@@ -707,82 +707,8 @@ bool Grafo<pair<float,float>,V>::bipartite(){
 
 	return true;
 
-
-
 }
 
-
-/*
-//=====================================================================================> DFS_CONNECTED 
-template<bool V>
-bool Grafo<pair<float,float>,V>::dfs_connected(int start){
-
-	stack<int> pila;
-	vector<int> visited(nodes.size(),0);
-	pila.push(start);
-	visited[start] = 1;
-	Node<pair<float,float>>* curr = nullptr;
-
-	while(!pila.empty()){
-		curr = nodes[pila.top()];
-		cout << "(" << curr->value.first << "," << curr->value.second << ")" << " ";
-
-		for (auto edge : curr->edges){
-			if (!visited[edge->end]){
-				pila.push(edge->end);
-				visited[edge->end] = 1;
-				dfs_connected(pila,visited,nodes[edge->end]);
-			}
-		}
-
-		for (auto valor : visited){
-			if (!valor){
-				return false;
-			}
-		}
-		return true;
-	}
-}
-
-template<bool V>
-void Grafo<pair<float,float>,V>::dfs_connected(stack<int>& pila, vector<int>& visited, Node<pair<float,float>>* curr){
-	cout << "(" << curr->value.first << "," << curr->value.second << ")" << " ";
-	for (auto edge : curr->edges){
-		if (!visited[edge->end]){
-			pila.push(edge->end);
-			visited[edge->end] = 1;
-			dfs_connected(pila,visited,nodes[edge->end]);
-		}
-	}
-	pila.pop();
-}
-//=====================================================================================|
-
-template<bool V>
-vector<Edge<float>*> Grafo<pair<float,float>,V>::non_decreasing_edges(){
-	edge_list sorted_edges = edges;
-	std::sort (sorted_edges.begin(), sorted_edges.end());
-	return sorted_edges;
-}
-*/
-
-/*
-=====================================================
-  non_decreasing_edges no usando el vector de edges
-=====================================================
-
-template<bool V>
-vector<Edge<float>*> Grafo<pair<float,float>,V>::non_decreasing_edges(){
-	vector<Edge<float>*> orderedEdges;
-	for (auto i : nodes)
-		for (auto j : i->edges){
-			cout << "(" << j->start << "," << j->end << ")" << " ";
-			orderedEdges.emplace_back(j);
-		}	
-	std::sort (ordered_edges.begin(), orderedEdges.end());
-	return orderedEdges;
-}
-*/
 
 
 #endif
