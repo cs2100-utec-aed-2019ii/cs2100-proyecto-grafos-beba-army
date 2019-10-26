@@ -13,6 +13,8 @@ float rotacion = 0.0;
 
 using namespace std;
 
+#ifdef OGL
+
 Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(2);
 map<pair<float,float>,bool> colores;
 
@@ -244,7 +246,7 @@ GLvoid window_display(){
 
 }
 
-
+#endif
 
 
 
