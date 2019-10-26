@@ -183,7 +183,7 @@ GLvoid window_display(){
 
 		current = nodos.front();
 
-		cout<<"Current node: ("<<current.first<<","<<current.second<<") looking for: ("<<find.first<<","<<find.second<<")\n";	
+		//cout<<"Current node: ("<<current.first<<","<<current.second<<") looking for: ("<<find.first<<","<<find.second<<")\n";	
 
 
 		
@@ -195,7 +195,7 @@ GLvoid window_display(){
 
 		for(auto edge: glutGraph->getEdges()){
 			if(edge->start == current && !glutGraph->findEdgePair(visited, edge->end)){
-				cout<<"Inserting from edge: ("<<current.first<<","<<current.second<<") -> ("<<edge->end.first<<","<<edge->end.second<<")\n";
+				//cout<<"Inserting from edge: ("<<current.first<<","<<current.second<<") -> ("<<edge->end.first<<","<<edge->end.second<<")\n";
 					nodos.push(edge->end);
 					visited.push_back(edge->end);
           camino[edge->end] = edge->start;
