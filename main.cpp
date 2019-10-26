@@ -48,7 +48,8 @@ int main(){
 			cout << "(" << i->start.first << "," << i->start.second << ") -> " << "(" << i->end.first << "," << i->end.second << ") || ";
 		}
 		cout << endl;
-
+		
+		cout << nodGrafo->density() << " <---- denso ";
 		 
     //Grafo<pair<int,int>,false>* _nodGrafo = new Grafo<pair<int,int>,false>(nodGrafo);
 

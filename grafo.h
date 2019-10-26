@@ -358,10 +358,13 @@ bool Grafo<pair<float,float>,V>::dfs_connected(pair<float,float> start){
 		}
 	}
 
-	if (visited.size() == nodes.size())
+	if (visited.size() == nodes.size()){
+		cout << "ES CONEXO \n";
 		return true;
-	else
+	}else{
+		cout << " NO ES CONEXO \n";
 		return false;
+	}
 
 };
 
