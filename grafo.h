@@ -69,6 +69,8 @@ class Grafo<pair<float,float>,V>
 		vector<pair<float,float>> getNeighbors(pair<float,float> index);
 		bool inNeighborhood(pair<float,float> start, pair<float,float> neighbor);
 
+		bool bipartite();
+
 
 		node_list getNodes(){
 			return nodes;
@@ -655,6 +657,58 @@ bool Grafo<pair<float,float>,V>::inNeighborhood(pair<float,float> start, pair<fl
 		return true;
 	}
 	return false;
+}
+
+
+template<bool V>
+bool Grafo<pair<float,float>,V>::bipartite(){
+	cout<<"Bipartite start\n";
+	map<pair<float,float>,int> color;
+	pair<float,float> current;
+	queue<pair<float,float>> nodos;
+	vector<pair<float,float>> visited;
+
+	for(auto nodo: nodes){
+
+
+		if(color[nodo->value] == 0){
+
+			current = nodo->value;
+
+			color[current] = 1;
+
+			nodos.push(current);
+
+			while(!nodos.empty()){
+
+				current = nodos.front();
+
+				nodos.pop();
+
+				for(auto edge: edges){
+					if(edge->start == current){
+						if(color[current] == color[edge->end]){
+							return false;
+						}
+						else{
+							color[edge->end] = color[current]*-1;
+						}
+						if(!findEdgePair(visited, edge->end)){
+							nodos.push(edge->end);
+							visited.push_back(edge->end);
+						}
+					}
+					
+				}
+
+			}
+		}
+	}
+
+	return true;
+
+
+
 }
 
 

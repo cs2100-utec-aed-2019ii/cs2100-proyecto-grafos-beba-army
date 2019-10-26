@@ -272,7 +272,7 @@ int main(int argc, char* argv[]){
 
 #ifndef OGL
     Grafo<pair<float,float>,false>* nodGrafo = new Grafo<pair<float,float>,false>();
-    Grafo<pair<float,float>,true>* dGrafo = new Grafo<pair<float,float>,true>();
+    Grafo<pair<float,float>,true>* test = new Grafo<pair<float,float>,true>(2);
 
     nodGrafo->addNode(pair<float,float>(0,0));
     nodGrafo->addNode(pair<float,float>(1,1));
@@ -340,6 +340,8 @@ int main(int argc, char* argv[]){
     cout<<"Neighborhood test (0,0) and (4,4): "<<nodGrafo->inNeighborhood(pair<float,float>(0,0),pair<float,float>(4,4))<<"\n";
     nodGrafo->addEdge(pair<float,float>(0,0),pair<float,float>(3,3),0.2);
     cout<<"Neighborhood test (0,0) and (4,4): "<<nodGrafo->inNeighborhood(pair<float,float>(0,0),pair<float,float>(4,4))<<"\n";
+
+    cout<<"\n\nBipartite: "<<test->bipartite();
 
 #endif
 
