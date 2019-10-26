@@ -414,9 +414,9 @@ bool Grafo<pair<float,float>, false>::density(){
 };
 
 
-bool already_visited(pair<float,float> value, std::vector<Node<pair<float,float>>*> list){
+bool already_visited(pair<float,float> value, std::vector<pair<float,float>> list){
 	for (auto i : list)
-		if (value == i->value) 
+		if (value == i) 
 			return true;
 	return false;
 };
@@ -428,26 +428,37 @@ Node<pair<float,float>>* pointer_home(pair<float,float> value, vector<Node<pair<
 	return nullptr;
 	std::cout << "NO SE ENCONTRO EL NODO <-- funcion: pointer_home\n";
 };
+/*
+class mycomparison
+{
+  bool reverse;
+public:
+  mycomparison(const bool& revparam=false)
+    {reverse=revparam;}
+  bool operator() (const int& lhs, const int&rhs) const
+  {
+    if (reverse) return (lhs>rhs);
+    else return (lhs<rhs);
+  }
+};
 
 template<>
 std::vector<Edge<float>*> Grafo<pair<float,float>, false>::mst_prim(){ 
 	std::vector<Edge<float>*> result;
-	auto comp = [](Edge<float>* a, Edge<float>* b){ return a->weight < b->weight;
-	};
-	priority_queue<Edge<float>*, std::vector<Edge<float>*>, comp> p_queue;
-	std::stack<pair<float,float>> visited;
+	priority_queue<Edge<float>*, std::vector<Edge<float>*>, mycomparison> p_queue;
+	std::vector<pair<float,float>> visited;
 
-	visited.emplace(nodes[1]->value);
+	visited.emplace_back(nodes[1]->value);
 	for (auto i : nodes[1]->edges)
 		p_queue.push(i);
 
 	while(!p_queue.empty()){
-		Edge<float>* front_edge = p_queue.front();
+		Edge<float>* front_edge = p_queue.top();
 		auto e_value = front_edge->end;
 		auto pointer = pointer_home(e_value, nodes);
-		if (!already_visited(e_value, p_queue)){
+		if (!already_visited(e_value, visited)){
 			result.emplace_back(front_edge);
-			visited.emplace(e_value);		
+			visited.emplace_back(e_value);		
 			for (auto i : pointer->edges)
 				p_queue.push(i);
 		}
@@ -456,6 +467,6 @@ std::vector<Edge<float>*> Grafo<pair<float,float>, false>::mst_prim(){
 		
 	return result;
 };
-
+*/
 #endif
 
