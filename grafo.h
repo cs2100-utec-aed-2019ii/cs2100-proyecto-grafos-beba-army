@@ -99,11 +99,57 @@ template<bool V>
 Grafo<pair<float,float>,V>::Grafo(int opcion){
 	switch (opcion)
 	{
-	case 1://vtk
-		/* code */
-		break;
+	case 1:{//vtk
+		ifstream myfile;
+		myfile.open("100points.vtk");
+		string word;
 
+		while(myfile >> word){
+			if (word == "POINTS"){
+				myfile >> word;
+				int node_q  = stoi(word);
 
+				myfile >> word;
+				myfile >> word;
+
+				for (int i=0; i < node_q; ++i){
+					int x = stoi(word);
+					myfile >> word;
+					int y = stoi(word);
+
+					this->addNode({x,y});
+
+					myfile >> word;
+					myfile >> word;
+				}
+			}
+			if (word == "EDGE"){
+				myfile >> word;
+				int node_q  = stoi(word);
+
+				myfile >> word;
+				myfile >> word;
+
+				for (int i=0; i < node_q; ++i){
+					int x = stoi(word);
+					myfile >> word;
+					int y = stoi(word);
+					myfile >> word;
+					int p = stoi(word);
+					myfile >> word;
+					int q = stoi(word);
+					myfile >> word;
+					int w = stoi(word);
+
+					this->addEdge({x,y}, {p,q},w);
+
+					myfile >> word;
+					myfile >> word;
+				}
+			}
+		}
+	break;
+	}
 	case 2:{//From disk ================================= Asumimos que el grafo esta correcto??????????????
 
 		string read;
@@ -214,10 +260,57 @@ template<>
 Grafo<pair<float,float>,true>::Grafo(int opcion){
 	switch (opcion)
 	{
-	case 1://vtk
-		/* code */
-		break;
+	case 1:{//vtk
+		ifstream myfile;
+		myfile.open("100points.vtk");
+		string word;
 
+		while(myfile >> word){
+			if (word == "POINTS"){
+				myfile >> word;
+				int node_q  = stoi(word);
+
+				myfile >> word;
+				myfile >> word;
+
+				for (int i=0; i < node_q; ++i){
+					int x = stoi(word);
+					myfile >> word;
+					int y = stoi(word);
+
+					this->addNode({x,y});
+
+					myfile >> word;
+					myfile >> word;
+				}
+			}
+			if (word == "EDGE"){
+				myfile >> word;
+				int node_q  = stoi(word);
+
+				myfile >> word;
+				myfile >> word;
+
+				for (int i=0; i < node_q; ++i){
+					int x = stoi(word);
+					myfile >> word;
+					int y = stoi(word);
+					myfile >> word;
+					int p = stoi(word);
+					myfile >> word;
+					int q = stoi(word);
+					myfile >> word;
+					int w = stoi(word);
+
+					//this->addEdge({x,y}, {p,q},w);
+
+					myfile >> word;
+					myfile >> word;
+				}
+			}
+		}
+	break;
+	}
 
 	case 2:{//From disk ================================= Asumimos que el grafo esta correcto??????????????
 
@@ -304,7 +397,7 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 
 
 			for(auto edge: edges){
-				if(edge->start == val1 && edge->end == val2 || val1 == val2){
+				if((edge->start == val1 && edge->end == val2) || val1 == val2){
 					duplicate = true;
 				}
 			}
@@ -809,8 +902,6 @@ bool Grafo<pair<float,float>, false>::density(){
 };
 
 template<bool V>
-/*
->>>>>>> develop
 vector<pair<float,float>> Grafo<pair<float,float>,V>::getNeighbors(pair<float,float> index){
 
 	vector<pair<float,float>> neighbors;
@@ -906,8 +997,8 @@ bool Grafo<pair<float,float>,V>::bipartite(){
 	return true;
 
 }
-*/
 
+/*
 bool already_visited(pair<float,float> value, std::vector<pair<float,float>> list){
 	for (auto i : list)
 		if (value == i) 
@@ -922,7 +1013,6 @@ Node<pair<float,float>>* pointer_home(pair<float,float> value, vector<Node<pair<
 	return nullptr;
 	std::cout << "NO SE ENCONTRO EL NODO <-- funcion: pointer_home\n";
 };
-/*
 class edge_comparator {
 	constexpr bool operator()(const Edge<float> &lhs, const Edge<float> &rhs) const {
     return lhs.weight < rhs.weight;
@@ -935,8 +1025,8 @@ std::vector<Edge<float>*> Grafo<pair<float,float>, false>::mst_prim(){
 	priority_queue<Edge<float>*, std::vector<Edge<float>*>, edge_comparator> p_queue;
 	std::vector<pair<float,float>> visited;
 
-	visited.emplace_back(nodes[1]->value);
-	for (auto i : nodes[1]->edges)
+	visited.emplace_back(nodes[0]->value);
+	for (auto i : nodes[0]->edges)
 		p_queue.push(i);
 
 	while(!p_queue.empty()){
@@ -956,4 +1046,3 @@ std::vector<Edge<float>*> Grafo<pair<float,float>, false>::mst_prim(){
 };
 */
 #endif
-

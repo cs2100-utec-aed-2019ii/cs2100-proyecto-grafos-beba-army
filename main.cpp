@@ -53,12 +53,14 @@ void Timer	(int value){ // intervalo en miliseg
     glutTimerFunc		(DURATION,Timer, 10);  
 }
 
+/*
 GLvoid callback_mouse(int button, int state, int x, int y){
-	if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
+	if (http://www.cplusplus.com/reference/queue/priority_queue/?kw=priority_queue(state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
 		//boids.push_back(boid(x,600-y));
 		//predador =  vector_t(x, 600-y,0);
 	}
 }
+*/
 
 GLvoid window_display(){
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -294,6 +296,15 @@ GLvoid window_display(){
 			break;
 		}
 		
+		case 'k':{
+			auto nodGrafoKruskal = glutGraph->mst_kruskal();
+			cout << "================Kruskal: \n";
+			for (auto i : nodGrafoKruskal){
+				cout << "(" << i->start.first << "," << i->start.second << ") -> " << "(" << i->end.first << "," << i->end.second << ") || ";
+			}
+			break;
+		}
+		
     default:{
       cout<<"Opcion invalida.\n";
       break;
@@ -341,6 +352,7 @@ int main(int argc, char* argv[]){
     nodGrafo->addEdge({-5,-5},{-5,0} ,2);    
     nodGrafo->addEdge({-5,0} ,{-5,5} ,1);    
 		
+
 
 		/*
 		==========
