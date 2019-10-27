@@ -213,8 +213,7 @@ GLvoid window_display(){
       current = camino[current];
     }
   
-    colores[current] = true;
-
+    colores[current] = true; 
   }
 
 
@@ -238,20 +237,24 @@ GLvoid window_display(){
       cout<<"Nodo 2:\nCoordenada x: ";
       cin>>node2_x;
       cout<<"\nCoordenada y: ";
-      cin>>node2_y;
-      cout<<"\n";
-      glutGraph->deleteEdge(pair<float,float>(node1_x,node1_y),pair<float,float>(node2_x,node2_y));
-      colores.clear();
-      break;
-    }
+      cin>>node2_y; cout<<"\n"; glutGraph->deleteEdge(pair<float,float>(node1_x,node1_y),pair<float,float>(node2_x,node2_y)); colores.clear(); break; }
     case 'x':{
       glutGraph->save();
       break;
     }
+		case 'c':{
+			if (glutGraph->connected())
+				cout<<" == Es conexo \n";
+			else
+				cout << " NO es conexo \n";
+			break;
+		}
+		
     default:{
       cout<<"Opcion invalida.\n";
       break;
     }
+
 
   }
 
@@ -293,11 +296,17 @@ int main(int argc, char* argv[]){
     nodGrafo->addEdge({5,5}  ,{-5,5} ,14);    
     nodGrafo->addEdge({-5,-5},{-5,0} ,2);    
     nodGrafo->addEdge({-5,0} ,{-5,5} ,1);    
+		
 
 		/*
 		==========
 		  Pruebas
 		==========
+		auto prim = nodGrafo->mst_prim();
+		cout << "================Prim: \n";
+		for (auto i : prim)
+			cout << "(" << i->start.first << "," << i->start.second << ") -> " << "(" << i->end.first << "," << i->end.second << ") || ";
+
 		auto nodGrafoKruskal = nodGrafo->mst_kruskal();
 		cout << "================Kruskal: \n";
 		for (auto i : nodGrafoKruskal){

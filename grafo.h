@@ -443,9 +443,7 @@ void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,flo
 		cout << "Loops not allowed\n";
 		return;
 	}
-<<<<<<< HEAD
-=======
-
+	
 	for(auto edge : edges){
 		if(edge->start== start && edge->end == end){
 			cout<<"Duplicate edge.\n";
@@ -453,7 +451,6 @@ void Grafo<pair<float,float>,V>::addEdge(pair<float,float> start, pair<float,flo
 		}
 	}
 	
->>>>>>> develop
 	float weight = pow(pow(start.first-end.first,2)-pow(start.second-end.second,2),2);
 	Edge<float>* edge1 = new Edge<float>(start, end, weight);
 	Edge<float>* edge2 = new Edge<float>(end, start, weight);
@@ -721,6 +718,7 @@ bool Grafo<pair<float,float>, false>::density(){
 		return true;
 };
 
+/*
 vector<pair<float,float>> Grafo<pair<float,float>,V>::getNeighbors(pair<float,float> index){
 
 	vector<pair<float,float>> neighbors;
@@ -815,6 +813,7 @@ bool Grafo<pair<float,float>,V>::bipartite(){
 	return true;
 
 }
+*/
 
 bool already_visited(pair<float,float> value, std::vector<pair<float,float>> list){
 	for (auto i : list)
@@ -831,23 +830,16 @@ Node<pair<float,float>>* pointer_home(pair<float,float> value, vector<Node<pair<
 	std::cout << "NO SE ENCONTRO EL NODO <-- funcion: pointer_home\n";
 };
 /*
-class mycomparison
-{
-  bool reverse;
-public:
-  mycomparison(const bool& revparam=false)
-    {reverse=revparam;}
-  bool operator() (const int& lhs, const int&rhs) const
-  {
-    if (reverse) return (lhs>rhs);
-    else return (lhs<rhs);
-  }
+class edge_comparator {
+	constexpr bool operator()(const Edge<float> &lhs, const Edge<float> &rhs) const {
+    return lhs.weight < rhs.weight;
+	}
 };
 
 template<>
 std::vector<Edge<float>*> Grafo<pair<float,float>, false>::mst_prim(){ 
 	std::vector<Edge<float>*> result;
-	priority_queue<Edge<float>*, std::vector<Edge<float>*>, mycomparison> p_queue;
+	priority_queue<Edge<float>*, std::vector<Edge<float>*>, edge_comparator> p_queue;
 	std::vector<pair<float,float>> visited;
 
 	visited.emplace_back(nodes[1]->value);
