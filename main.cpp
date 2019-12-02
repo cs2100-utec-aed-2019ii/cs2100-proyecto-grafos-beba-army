@@ -14,7 +14,7 @@ float rotacion = 0.0;
 
 using namespace std;
 
-//#ifdef OGL
+#ifdef OGL
 
 Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(3);
 IteradorGrafo<pair<float,float>,false>* itGraph = nullptr;
@@ -356,7 +356,7 @@ if(menu){
 
 }
 
-//#endif
+#endif
 
 
 
