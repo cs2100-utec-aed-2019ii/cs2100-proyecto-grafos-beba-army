@@ -12,6 +12,9 @@
         "ostream": "cpp",
         "tuple": "cpp",
         "type_traits": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "limits": "cpp",
+        "string": "cpp",
+        "initializer_list": "cpp"
     }
 }

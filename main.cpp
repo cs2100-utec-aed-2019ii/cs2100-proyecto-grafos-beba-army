@@ -21,7 +21,6 @@ using namespace std;
 Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(2);
 IteradorGrafo<pair<float,float>,false>* itGraph = nullptr;
 map<pair<float,float>,bool> colores;
-pair<float,float> root;
 bool menu = false;
 
 GLvoid initGL(){
@@ -64,10 +63,12 @@ GLvoid window_key(unsigned char key, int x, int y){
 GLvoid special_key(int key, int x, int y){
 	switch (key) {
 	case GLUT_KEY_RIGHT: {
+    if(itGraph)
       itGraph->max();
       break;
   }
   case GLUT_KEY_LEFT: {
+    if(itGraph)
     itGraph->min();
     break;
   }
@@ -314,7 +315,6 @@ if(menu){
       cin>>node1_x;
       cout<<"\nCoordenada y: ";
       cin>>node1_y;
-      root = pair<float,float>(node1_x, node1_y);
       vector<pair<float,float>> neighbors = glutGraph->getNeighbors(pair<float,float>(node1_x,node1_y));
       colores[pair<float,float>(node1_x,node1_y)] = true;
 
