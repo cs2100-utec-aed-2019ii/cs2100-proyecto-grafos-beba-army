@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include "grafo.h"
+#include <GL/glut.h>
 
 #define ANCHO	600
 #define ALTO	600
@@ -15,9 +16,11 @@ using namespace std;
 
 //#ifdef OGL
 
-Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(2);
+Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(3);
+IteradorGrafo<pair<float,float>,false>* itGraph = nullptr;
 map<pair<float,float>,bool> colores;
 pair<float,float> root;
+bool menu = false;
 
 GLvoid initGL(){
 	glClearColor(0, 0, 0, 1);
@@ -36,10 +39,36 @@ GLvoid window_reshape(GLsizei width, GLsizei height){
 }
 
 GLvoid window_key(unsigned char key, int x, int y){
+
+	switch(key){
+    case 'm':{
+      cout<<"Menu opened.\n";
+      menu = true;
+      break;
+    }
+    case 'i':{
+      if(itGraph){
+        delete itGraph;
+      }
+      itGraph = new IteradorGrafo<pair<float,float>,false>(glutGraph);
+      break;
+    }
+    
+    default:
+    break;
+}
+}
+
+GLvoid special_key(int key, int x, int y){
 	switch (key) {
-	case 27:
-		exit(1);
-		break;
+	case GLUT_KEY_RIGHT: {
+      itGraph->max();
+      break;
+  }
+  case GLUT_KEY_LEFT: {
+    itGraph->min();
+    break;
+  }
 
 	default:
 		break;
@@ -54,10 +83,12 @@ void Timer	(int value){ // intervalo en miliseg
 }
 
 GLvoid callback_mouse(int button, int state, int x, int y){
+  cout<<"mouse: "<<x-ANCHO/2<<","<<ALTO/2-y<<"\n";
 	if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
-		//boids.push_back(boid(x,600-y));
-		//predador =  vector_t(x, 600-y,0);
+		
+    cout<<"Left pressed.\n";
 	}
+
 }
 
 GLvoid window_display(){
@@ -77,8 +108,15 @@ GLvoid window_display(){
     glPushMatrix();
     glTranslatef(glutGraph->getNodes()[i]->value.first,glutGraph->getNodes()[i]->value.second,0);
     //cout<<"Node drawn in: "<<glutGraph->getNodes()[i]->value.first<<","<<glutGraph->getNodes()[i]->value.second<<"\n";
-    if(colores[glutGraph->getNodes()[i]->value]){
+    if(itGraph && glutGraph->getNodes()[i]->value == itGraph->current_node->value){
+      glColor3f(0.2,0.3,0.9);
+    }
+    else if(itGraph && find(itGraph->neighbors.begin(),itGraph->neighbors.end(),glutGraph->getNodes()[i]->value) != itGraph->neighbors.end() && itGraph->inNeighborhood(glutGraph->getNodes()[i]->value)){
+      glColor3f(0,0.1,0.6);
+    }
+    else if(colores[glutGraph->getNodes()[i]->value]){
       glColor3f(0.9,0.3,0.2);
+      
     }
     else{
       glColor3f(1,1,1);
@@ -91,7 +129,19 @@ GLvoid window_display(){
     glPushMatrix();
 
     glBegin(GL_LINES);
-    if(colores[glutGraph->getEdges()[i]->start] && colores[glutGraph->getEdges()[i]->end]){
+    if(itGraph && 
+    ((find(itGraph->neighbors.begin(),itGraph->neighbors.end(),glutGraph->getEdges()[i]->end) != itGraph->neighbors.end() && itGraph->inNeighborhood(glutGraph->getEdges()[i]->end) && glutGraph->getEdges()[i]->start == itGraph->current_node->value) ||
+    (find(itGraph->neighbors.begin(),itGraph->neighbors.end(),glutGraph->getEdges()[i]->start) != itGraph->neighbors.end() && itGraph->inNeighborhood(glutGraph->getEdges()[i]->start) && glutGraph->getEdges()[i]->end == itGraph->current_node->value)
+
+    )){
+      glColor3f(0.2,0.3,0.9);
+    }
+    else if(itGraph && find(itGraph->camino.begin(),itGraph->camino.end(),glutGraph->getEdges()[i]->start) != itGraph->camino.end() &&
+            find(itGraph->camino.begin(),itGraph->camino.end(),glutGraph->getEdges()[i]->end) != itGraph->camino.end()
+    ){
+      glColor3f(1.0, 1.0, 0.0);
+    }
+    else if(colores[glutGraph->getEdges()[i]->start] && colores[glutGraph->getEdges()[i]->end]){
       glColor3f(0.9,0.3,0.2);
     }
     else{
@@ -122,7 +172,11 @@ GLvoid window_display(){
 
 	glutSwapBuffers();
 	glFlush();
+if(menu){
+  
   cout<<"OPCIONES: \nn: insertar nodo.\ne: insertar edge.\ns: seleccionar nodos.\nb: borrar nodo.\nd: borrar edge.\nx: guardar grafo.\n2: Bipartite check.\nh: neighborhood.\n";
+
+
 
   cin>>opcion;
 
@@ -150,7 +204,7 @@ GLvoid window_display(){
       cin>>weight;
       cout<<"\n"; 
       if(weight == -1){
-        cout<<"No weight!\n";
+        std::cout<<"No weight!\n";
         glutGraph->addEdge(pair<float,float>(node1_x,node1_y),pair<float,float>(node2_x,node2_y));
       }
       else{
@@ -297,6 +351,8 @@ GLvoid window_display(){
     }
 
   }
+  menu = false;
+}
 
 }
 
@@ -418,6 +474,7 @@ int main(int argc, char* argv[]){
   // glutGraph->addNode(pair<float,float>(500,500));
   // glutGraph->addEdge(pair<float,float>(500,500),pair<float,float>(100,100));
 
+  //cout<<"OPCIONES: \nn: insertar nodo.\ne: insertar edge.\ns: seleccionar nodos.\nb: borrar nodo.\nd: borrar edge.\nx: guardar grafo.\n2: Bipartite check.\nh: neighborhood.\n";
 
   glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
@@ -429,6 +486,7 @@ int main(int argc, char* argv[]){
 	glutDisplayFunc(&window_display);
 	glutReshapeFunc(&window_reshape);
 	glutKeyboardFunc(&window_key);
+  glutSpecialFunc(&special_key);
 	glutTimerFunc(DURATION, Timer, 1);
 	glutMouseFunc(&callback_mouse);
 	glutMainLoop();

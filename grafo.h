@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <ctime>
 #include <GL/glut.h>
+#include <random>
 
 #include "disjoint_set.h"
 
@@ -99,12 +100,13 @@ template<bool V>
 Grafo<pair<float,float>,V>::Grafo(int opcion){
 	switch (opcion)
 	{
-	case 1://vtk
-		/* code */
+	case 1:{//vtk
+		/*code*/
 		break;
+	}
 
 
-	case 2:{//From disk ================================= Asumimos que el grafo esta correcto??????????????
+	case 2:{//From disk 
 
 		string read;
 		int numNodes;
@@ -130,7 +132,7 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 				stream>>val1;
 				stream>>val2;
 
-				nodes.emplace_back(new Node<pair<float,float>>(pair<float,float>(val1,val2)));
+				addNode({val1,val2});
 
 			}
 
@@ -144,17 +146,26 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 
 				edges.emplace_back(new Edge<float>(pair<float,float>(val1,val2),pair<float,float>(val3,val4),weight));
 
+				for(auto node: nodes){
+					if(node->value == pair<float,float>(val1,val2)){
+						node->edges.emplace_back(new Edge<float>(pair<float,float>(val1,val2),pair<float,float>(val3,val4),weight));
+					}
+					else if(node->value == pair<float,float>(val3,val4)){
+						node->edges.emplace_back(new Edge<float>(pair<float,float>(val3,val4),pair<float,float>(val1,val2),weight));
+					}
+				}
+
 			}
 
 		}
 
-	// cout<<"\n\nGraph read result:\n";
-	// for(auto node : nodes){
-	// 	cout<<node->value.first<<" "<<node->value.second<<"\n";
-	// }
-	// for(auto edge : edges){
-	// 	cout<<edge->start.first<<" "<<edge->start.second<<" "<<edge->end.first<<" "<<edge->end.second<<" "<<edge->weight<<"\n";
-	// }
+	cout<<"\n\nGraph read result:\n";
+	for(auto node : nodes){
+		cout<<node->value.first<<" "<<node->value.second<<"\n";
+	}
+	for(auto edge : edges){
+		cout<<edge->start.first<<" "<<edge->start.second<<" "<<edge->end.first<<" "<<edge->end.second<<" "<<edge->weight<<"\n";
+	}
 
 
 		file.close();
@@ -187,9 +198,9 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 			val1 = getNodes()[node1]->value;
 			val2 = getNodes()[node2]->value;
 
-			weight = (rand() % 100) / pow(10,(rand() % 2 + 1));
+			//weight = (rand() % 100) / pow(10,(rand() % 2 + 1));
 
-			addEdge(val1, val2, weight);
+			addEdge(val1, val2);
 		}
 
 	cout<<"\n\nRandom graph result:\n";
@@ -245,7 +256,7 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 				stream>>val1;
 				stream>>val2;
 
-				nodes.emplace_back(new Node<pair<float,float>>(pair<float,float>(val1,val2)));
+				addNode({val1,val2});
 
 			}
 
@@ -259,17 +270,25 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 
 				edges.emplace_back(new Edge<float>(pair<float,float>(val1,val2),pair<float,float>(val3,val4),weight));
 
+			for(auto node: nodes){
+				if(node->value == pair<float,float>(val1,val2)){
+					node->edges.emplace_back(new Edge<float>(pair<float,float>(val1,val2),pair<float,float>(val3,val4),weight));
+				}
+			}
+
 			}
 
 		}
 
-	// cout<<"\n\nGraph read result:\n";
-	// for(auto node : nodes){
-	// 	cout<<node->value.first<<" "<<node->value.second<<"\n";
-	// }
-	// for(auto edge : edges){
-	// 	cout<<edge->start.first<<" "<<edge->start.second<<" "<<edge->end.first<<" "<<edge->end.second<<" "<<edge->weight<<"\n";
-	// }
+
+
+	cout<<"\n\nGraph read result:\n";
+	for(auto node : nodes){
+		cout<<node->value.first<<" "<<node->value.second<<"\n";
+	}
+	for(auto edge : edges){
+		cout<<edge->start.first<<" "<<edge->start.second<<" "<<edge->end.first<<" "<<edge->end.second<<" "<<edge->weight<<"\n";
+	}
 
 
 		file.close();
@@ -282,14 +301,14 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 		srand(time(NULL));
 
 		int numNodes = rand() % 5 + 1;
-		int numEdges = rand() % ((numNodes*(numNodes-1)) + 1);
+		int numEdges = (numNodes == 1)?0: rand() % (numNodes*(numNodes-1));
 		bool duplicate;
 
 		float node1, node2, weight;
 		pair<float,float> val1, val2;
 
 		for(int i = 0; i < numNodes; i++){
-			val1 = pair<float,float>((rand() % 100) / pow(10,(rand() % 2)),(rand() % 100) / pow(10,(rand() % 2)));
+			val1 = pair<float,float>(pow(-1,rand() % 2)*(rand() % 585),pow(-1,rand() % 2)*(rand() % 585) );
 			addNode(val1);
 		}
 
@@ -961,5 +980,156 @@ std::vector<Edge<float>*> Grafo<pair<float,float>, false>::mst_prim(){
 	return result;
 };
 */
-#endif
 
+template<typename T, bool V>
+class IteradorGrafo{
+	private:
+	Node<T>* current_node;
+
+	public:
+	IteradorGrafo(Grafo<T, V>* grafo){
+
+	}
+};
+
+template<bool V>
+class IteradorGrafo<pair<float,float>,V>{
+	private:
+	
+
+	public:
+	Node<pair<float,float>>* current_node;
+	Grafo<pair<float,float>,V>* grafo;
+	vector<pair<float,float>> neighbors;
+	vector<pair<float,float>> camino;
+
+	IteradorGrafo(){
+		current_node = nullptr;
+	}
+
+	IteradorGrafo(Grafo<pair<float,float>, V>* grafo){
+		this->grafo = grafo;
+		srand(time(nullptr));
+		int start = rand() % grafo->getNodes().size();
+		current_node = grafo->getNodes()[start];
+		cout<<"Iterator started on node: "<<current_node->value.first<<","<<current_node->value.second<<"\n";
+		neighbors = getNeighbors();
+		camino.push_back(current_node->value);
+
+	}
+
+	void start(Grafo<pair<float,float>, V>* grafo){
+		srand(time(nullptr));
+		int start = rand() % grafo->getNodes().size();
+		current_node = grafo->getNodes()[start];
+		camino.push_back(current_node->value);
+	}
+
+	vector<pair<float,float>> getNeighbors(){
+
+		vector<pair<float,float>> _neighbors;
+
+		for(auto edge: current_node->edges){
+				_neighbors.push_back(edge->end);
+			
+		}
+		return _neighbors;
+	}
+
+
+	bool inNeighborhood(pair<float,float> neighbor){
+
+		float meanWeight = 0;
+		int edgeCount = 0;
+		Edge<float>* connection = nullptr;
+
+		for (auto edge: current_node->edges){
+			if(edge->start == current_node->value){
+				//cout<<"Edge found with end: "<<edge->end.first<<","<<edge->end.second<<" and weight: "<<edge->weight<<"\n";
+				meanWeight+=edge->weight;
+				edgeCount++;
+				if(edge->end == neighbor){
+					connection = edge;
+				}
+			}
+		}
+
+		if(!connection){
+			//cout<<"Nodes are not connected.\n";
+			return false;
+		}
+
+		meanWeight /= edgeCount;
+		//cout<<"Mean weight: "<<meanWeight<<"\n";
+
+		if(connection->weight <= meanWeight){
+			//cout<<"Weight: "<<connection->weight<<" smaller than "<<meanWeight<<"\n";
+			return true;
+		}
+		return false;
+	}
+
+	void max(){
+		cout<<"Started max move\n";
+		float highest = 0;
+		int new_node = 0;
+
+		if(current_node->edges.size() == 0){
+			return;
+		}
+
+		for(int i = 0; i < current_node->edges.size(); i++){
+			if(current_node->edges[i]->weight > highest){
+				highest = current_node->edges[i]->weight;
+				new_node = i;
+			}
+		}
+
+		for(auto node: grafo->getNodes()){
+			if(current_node->edges[new_node]->end.first == node->value.first && current_node->edges[new_node]->end.second == node->value.second){
+				cout<<"Switched to max node: "<<node->value.first<<","<<node->value.second<<"\n";
+				current_node = node;
+				neighbors = getNeighbors();
+				if(find(camino.begin(),camino.end(),current_node->value) == camino.end()){
+					camino.push_back(current_node->value);
+				}
+				break;
+			}
+		}
+
+		
+		
+	}
+
+	void min(){
+		cout<<"Started min move\n";
+		float highest = numeric_limits<float>::max();
+		int new_node = 0;
+
+		if(current_node->edges.size() == 0){
+			return;
+		}
+
+		for(int i = 0; i < current_node->edges.size(); i++){
+			if(current_node->edges[i]->weight < highest){
+				highest = current_node->edges[i]->weight;
+				new_node = i;
+			}
+		}
+		
+		for(auto node: grafo->getNodes()){
+			if(current_node->edges[new_node]->end.first == node->value.first && current_node->edges[new_node]->end.second == node->value.second){
+				cout<<"Switched to min node: "<<node->value.first<<","<<node->value.second<<"\n";
+				current_node = node;
+				neighbors = getNeighbors();
+				if(find(camino.begin(),camino.end(),current_node->value) == camino.end()){
+					camino.push_back(current_node->value);
+				}
+				break;
+			}
+		}
+	}
+
+};
+
+#endif
