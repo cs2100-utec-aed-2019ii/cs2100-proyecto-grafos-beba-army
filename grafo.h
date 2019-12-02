@@ -1090,9 +1090,7 @@ class IteradorGrafo<pair<float,float>,V>{
 				cout<<"Switched to max node: "<<node->value.first<<","<<node->value.second<<"\n";
 				current_node = node;
 				neighbors = getNeighbors();
-				if(find(camino.begin(),camino.end(),current_node->value) == camino.end()){
-					camino.push_back(current_node->value);
-				}
+				camino.push_back(current_node->value);
 				break;
 			}
 		}
@@ -1122,11 +1120,10 @@ class IteradorGrafo<pair<float,float>,V>{
 				cout<<"Switched to min node: "<<node->value.first<<","<<node->value.second<<"\n";
 				current_node = node;
 				neighbors = getNeighbors();
-				if(find(camino.begin(),camino.end(),current_node->value) == camino.end()){
 					camino.push_back(current_node->value);
-				}
+				
 				break;
-			}
+			}//1. Operador de igualdad para edge y guardar edges en camino, 2.guardar el camino en orden y revisar que el edge sea i -> i+1
 		}
 	}
 
