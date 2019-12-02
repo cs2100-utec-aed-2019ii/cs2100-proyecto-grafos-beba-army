@@ -3,6 +3,8 @@
 #include "grafo.h"
 #include <GL/glut.h>
 
+//g++ main.cpp -lGL -lglut -D OGL
+
 #define ANCHO	600
 #define ALTO	600
 #define PROFUNDIDAD 100
@@ -16,7 +18,7 @@ using namespace std;
 
 #ifdef OGL
 
-Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(3);
+Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(2);
 IteradorGrafo<pair<float,float>,false>* itGraph = nullptr;
 map<pair<float,float>,bool> colores;
 pair<float,float> root;
@@ -137,9 +139,24 @@ GLvoid window_display(){
       glColor3f(0.2,0.3,0.9);
     }
     else if(itGraph && find(itGraph->camino.begin(),itGraph->camino.end(),glutGraph->getEdges()[i]->start) != itGraph->camino.end() &&
-            find(itGraph->camino.begin(),itGraph->camino.end(),glutGraph->getEdges()[i]->end) != itGraph->camino.end()
+            find(itGraph->camino.begin(),itGraph->camino.end(),glutGraph->getEdges()[i]->end) != itGraph->camino.end() 
     ){
-      glColor3f(1.0, 1.0, 0.0);
+      bool found = false;
+      for(int j = 0; j < itGraph->camino.size()-1;j++){
+        if((itGraph->camino[j] == glutGraph->getEdges()[i]->start && itGraph->camino[j+1] == glutGraph->getEdges()[i]->end) ||
+            (itGraph->camino[j] == glutGraph->getEdges()[i]->end && itGraph->camino[j+1] == glutGraph->getEdges()[i]->start)
+        ){
+          found = true;
+          break;
+        }
+      }
+      if(found){
+        glColor3f(1.0, 1.0, 0.0);
+      }
+      else{
+        glColor3f(1,1,1);
+      }
+
     }
     else if(colores[glutGraph->getEdges()[i]->start] && colores[glutGraph->getEdges()[i]->end]){
       glColor3f(0.9,0.3,0.2);

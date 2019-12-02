@@ -98,7 +98,9 @@ Edge< float>::~Edge(){
 }
 
 
-
+bool operator ==(const Edge<float>& lhs,const Edge<float>& rhs){
+    return lhs.start == rhs.start && lhs.weight == rhs.weight && lhs.end == rhs.end;
+}
 
 
 
