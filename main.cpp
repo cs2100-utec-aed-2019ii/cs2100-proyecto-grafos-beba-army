@@ -58,7 +58,7 @@ GLvoid window_key(unsigned char key, int x, int y){
       break;
     }
     case 'd':{
-
+      cout<<"Dijkstra\n";
       colores.clear();
 
       bool found = false;
@@ -122,8 +122,66 @@ GLvoid window_key(unsigned char key, int x, int y){
       }
     }
     case 'a':{
+      cout<<"A*\n";
+      colores.clear();
+
+      bool found = false;
+      pair<float,float> current;
+      map<Node<pair<float,float>>*,float> distance; 
+      map<pair<float,float>,pair<float,float>> camino; 
+      Node<pair<float,float>>* curNode = nullptr;
+      Node<pair<float,float>>* nodeComp = nullptr;
+
       if(node1 && node2){
-        cout<<"A*!\n";
+
+        priority_queue< pair<Node<pair<float,float>>*,float>, vector<pair<Node<pair<float,float>>*,float>> , compare> pq;
+
+        for(auto node: glutGraph->getNodes()){
+          if(node == node1){
+            distance[node] = 0;
+          }
+          else{
+            distance[node] = numeric_limits<float>::max();
+          }
+        }
+
+        pq.push({node1,0});
+
+        while(!pq.empty()){
+
+          curNode = pq.top().first;
+          pq.pop();
+
+          if(curNode == node2){
+            found = true;
+          }
+
+          for(auto edge: curNode->edges){
+            nodeComp = glutGraph->getNode(edge->end);
+            if(distance[nodeComp] > distance[curNode] + edge->weight + heuristica(nodeComp,node2)){
+              distance[nodeComp] = distance[curNode] + edge->weight + heuristica(nodeComp,node2);
+              pq.push({nodeComp,distance[nodeComp]});
+              camino[nodeComp->value] = curNode->value;
+            }
+          }
+
+        }
+
+
+
+        if(found){
+          current = pair<float,float>(node2->value.first,node2->value.second);
+          while(current != pair<float,float>(node1->value.first,node1->value.second)){
+            //cout<<"Pintando: ("<<current.first<<","<<current.second<<")\n";
+            colores[current] = true;
+            current = camino[current];
+          }
+        
+          colores[current] = true;
+
+        }
+
+
         break;
       }
     }

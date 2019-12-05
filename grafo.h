@@ -1143,4 +1143,8 @@ struct compare{
 	}
 };
 
+float heuristica(Node<pair<float,float>>* n1, Node<pair<float,float>>* n2){
+	return pow(pow(n1->value.first-n2->value.first,2)+pow(n1->value.second-n2->value.second,2),0.5);
+}
+
 #endif
