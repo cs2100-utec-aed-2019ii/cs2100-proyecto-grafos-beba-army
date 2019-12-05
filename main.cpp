@@ -16,9 +16,9 @@ float rotacion = 0.0;
 
 using namespace std;
 
-//#ifdef OGL
+#ifdef OGL
 
-Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(3);
+Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(2);
 IteradorGrafo<pair<float,float>,false>* itGraph = nullptr;
 map<pair<float,float>,bool> colores;
 Node<pair<float,float>>* node1 = nullptr;
@@ -161,9 +161,10 @@ GLvoid callback_mouse(int button, int state, int x, int y){
   
 	if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
     cout<<"mouse: "<<(x-ANCHO/2)*2<<","<<(ALTO/2-y)*2<<"\n";
+    for(auto node: glutGraph->getNodes()){
     for(int x_error = -4; x_error < 5; x_error++){
       for(int y_error = -4; y_error < 5; y_error++){
-        for(auto node: glutGraph->getNodes()){
+        
           if(node->value == pair<float,float>((x-ANCHO/2)*2+x_error,(ALTO/2-y)*2+y_error)){
             node1 = node;
             cout<<"Node set!\n";
@@ -176,9 +177,10 @@ GLvoid callback_mouse(int button, int state, int x, int y){
 
   if (state == GLUT_DOWN && button == GLUT_RIGHT_BUTTON){
     cout<<"mouse: "<<(x-ANCHO/2)*2<<","<<(ALTO/2-y)*2<<"\n";
+    for(auto node: glutGraph->getNodes()){
     for(int x_error = -4; x_error < 5; x_error++){
       for(int y_error = -4; y_error < 5; y_error++){
-        for(auto node: glutGraph->getNodes()){
+        
           if(node->value == pair<float,float>((x-ANCHO/2)*2+x_error,(ALTO/2-y)*2+y_error)){
             node2 = node;
             cout<<"Node set!\n";
