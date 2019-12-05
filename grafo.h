@@ -83,6 +83,14 @@ class Grafo<pair<float,float>,V>
 			return edges;
 		}
 
+		Node<pair<float,float>>* getNode(pair<float,float> val){
+			for(auto node: nodes){
+				if(node->value == val){
+					return node;
+				}
+			}
+		}
+
 		~Grafo();
 };
 
@@ -1127,6 +1135,12 @@ class IteradorGrafo<pair<float,float>,V>{
 		}
 	}
 
+};
+
+struct compare{
+	bool operator()(pair<Node<pair<float,float>>*,float> n1, pair<Node<pair<float,float>>*,float> n2){
+		return n1.second < n2.second;
+	}
 };
 
 #endif

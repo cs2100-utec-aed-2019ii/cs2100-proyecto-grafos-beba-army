@@ -5,8 +5,8 @@
 
 //g++ main.cpp -lGL -lglut -D OGL
 
-#define ANCHO	600
-#define ALTO	600
+#define ANCHO	800
+#define ALTO	800
 #define PROFUNDIDAD 100
 
 #define ORADIUS 30
@@ -16,12 +16,15 @@ float rotacion = 0.0;
 
 using namespace std;
 
-#ifdef OGL
+//#ifdef OGL
 
-Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(2);
+Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(3);
 IteradorGrafo<pair<float,float>,false>* itGraph = nullptr;
 map<pair<float,float>,bool> colores;
+Node<pair<float,float>>* node1 = nullptr;
+Node<pair<float,float>>* node2 = nullptr;
 bool menu = false;
+
 
 GLvoid initGL(){
 	glClearColor(0, 0, 0, 1);
@@ -54,7 +57,76 @@ GLvoid window_key(unsigned char key, int x, int y){
       itGraph = new IteradorGrafo<pair<float,float>,false>(glutGraph);
       break;
     }
-    
+    case 'd':{
+
+      colores.clear();
+
+      bool found = false;
+      pair<float,float> current;
+      map<Node<pair<float,float>>*,float> distance; 
+      map<pair<float,float>,pair<float,float>> camino; 
+      Node<pair<float,float>>* curNode = nullptr;
+      Node<pair<float,float>>* nodeComp = nullptr;
+
+      if(node1 && node2){
+
+        priority_queue< pair<Node<pair<float,float>>*,float>, vector<pair<Node<pair<float,float>>*,float>> , compare> pq;
+
+        for(auto node: glutGraph->getNodes()){
+          if(node == node1){
+            distance[node] = 0;
+          }
+          else{
+            distance[node] = numeric_limits<float>::max();
+          }
+        }
+
+        pq.push({node1,0});
+
+        while(!pq.empty()){
+
+          curNode = pq.top().first;
+          pq.pop();
+
+          if(curNode == node2){
+            found = true;
+          }
+
+          for(auto edge: curNode->edges){
+            nodeComp = glutGraph->getNode(edge->end);
+            if(distance[nodeComp] > distance[curNode] + edge->weight){
+              distance[nodeComp] = distance[curNode] + edge->weight;
+              pq.push({nodeComp,distance[nodeComp]});
+              camino[nodeComp->value] = curNode->value;
+            }
+          }
+
+        }
+
+
+
+        if(found){
+          current = pair<float,float>(node2->value.first,node2->value.second);
+          while(current != pair<float,float>(node1->value.first,node1->value.second)){
+            //cout<<"Pintando: ("<<current.first<<","<<current.second<<")\n";
+            colores[current] = true;
+            current = camino[current];
+          }
+        
+          colores[current] = true;
+
+        }
+
+
+        break;
+      }
+    }
+    case 'a':{
+      if(node1 && node2){
+        cout<<"A*!\n";
+        break;
+      }
+    }
     default:
     break;
 }
@@ -86,10 +158,35 @@ void Timer	(int value){ // intervalo en miliseg
 }
 
 GLvoid callback_mouse(int button, int state, int x, int y){
-  cout<<"mouse: "<<x-ANCHO/2<<","<<ALTO/2-y<<"\n";
+  
 	if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
-		
-    cout<<"Left pressed.\n";
+    cout<<"mouse: "<<(x-ANCHO/2)*2<<","<<(ALTO/2-y)*2<<"\n";
+    for(int x_error = -4; x_error < 5; x_error++){
+      for(int y_error = -4; y_error < 5; y_error++){
+        for(auto node: glutGraph->getNodes()){
+          if(node->value == pair<float,float>((x-ANCHO/2)*2+x_error,(ALTO/2-y)*2+y_error)){
+            node1 = node;
+            cout<<"Node set!\n";
+            return;
+          }
+        }
+      }
+    }
+	}
+
+  if (state == GLUT_DOWN && button == GLUT_RIGHT_BUTTON){
+    cout<<"mouse: "<<(x-ANCHO/2)*2<<","<<(ALTO/2-y)*2<<"\n";
+    for(int x_error = -4; x_error < 5; x_error++){
+      for(int y_error = -4; y_error < 5; y_error++){
+        for(auto node: glutGraph->getNodes()){
+          if(node->value == pair<float,float>((x-ANCHO/2)*2+x_error,(ALTO/2-y)*2+y_error)){
+            node2 = node;
+            cout<<"Node set!\n";
+            return;
+          }
+        }
+      }
+    }
 	}
 
 }
