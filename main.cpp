@@ -18,7 +18,7 @@ using namespace std;
 
 #ifdef OGL
 
-Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(2);
+Grafo<pair<float,float>,false>* glutGraph = new Grafo<pair<float,float>,false>(1);
 IteradorGrafo<pair<float,float>,false>* itGraph = nullptr;
 map<pair<float,float>,bool> colores;
 Node<pair<float,float>>* node1 = nullptr;

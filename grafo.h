@@ -14,6 +14,7 @@
 #include <ctime>
 #include <GL/glut.h>
 #include <random>
+#include <map>
 
 #include "disjoint_set.h"
 
@@ -115,7 +116,6 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 	std::cin >> file_path;
 	myfile.open(file_path);
 	string word;
-	Grafo<pair<float,float>,false>* graph = new Grafo<pair<float,float>,false>();
 
 	while(myfile >> word){
 		if (word == "POINTS"){
@@ -130,7 +130,7 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 				myfile >> word;
 				int y = stoi(word);
 
-				graph->addNode({x,y});
+				this->addNode({x,y});
 
 				myfile >> word;
 				myfile >> word;
@@ -154,7 +154,7 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 				myfile >> word;
 				int w = stoi(word);
 
-				graph->addEdge({x,y}, {p,q},w);
+				this->addEdge({x,y}, {p,q},w);
 
 				myfile >> word;
 				myfile >> word;
@@ -196,7 +196,7 @@ Grafo<pair<float,float>,V>::Grafo(int opcion){
 						p = node_x[0];
 						q = node_y[0];
 					}
-					graph->addEdge({x,y}, {p,q});
+					this->addEdge({x,y}, {p,q});
 				}
 
 			}
@@ -425,7 +425,7 @@ Grafo<pair<float,float>,true>::Grafo(int opcion){
 
 
 			for(auto edge: edges){
-				if(edge->start == val1 && edge->end == val2 || val1 == val2){
+				if((edge->start == val1 && edge->end == val2) || val1 == val2){
 					duplicate = true;
 				}
 			}
@@ -982,7 +982,7 @@ bool Grafo<pair<float,float>,V>::inNeighborhood(pair<float,float> start, pair<fl
 template<bool V>
 bool Grafo<pair<float,float>,V>::bipartite(){
 	//cout<<"Bipartite start\n";
-	map<pair<float,float>,int> color;
+	std::map<pair<float,float>,int> color;
 	pair<float,float> current;
 	queue<pair<float,float>> nodos;
 	vector<pair<float,float>> visited;
